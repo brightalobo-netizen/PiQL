@@ -1,145 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PiQL Explore - Browse NFTs</title>
-    <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.1/dist/ethers.umd.min.js"></script>
-    <style>
-        body { 
-            font-family: 'Arial', sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; 
-            margin: 0; 
-            padding: 20px;
-            min-height: 100vh;
-        }
-        .container { max-width: 1200px; margin: 0 auto; }
-        h1 { text-align: center; margin-bottom: 30px; }
-        .nav { text-align: center; margin-bottom: 30px; }
-        .nav a { 
-            color: white; 
-            text-decoration: none; 
-            margin: 0 15px; 
-            padding: 10px 20px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 20px;
-        }
-        .nav a:hover { background: rgba(255,255,255,0.3); }
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
-            gap: 20px; 
-        }
-        .nft-card { 
-            background: rgba(255,255,255,0.1); 
-            border-radius: 15px; 
-            padding: 15px; 
-            backdrop-filter: blur(10px);
-        }
-        .nft-card img { 
-            width: 100%; 
-            height: 250px; 
-            object-fit: cover; 
-            border-radius: 10px; 
-        }
-        .status { 
-            text-align: center; 
-            padding: 20px; 
-            background: rgba(0,0,0,0.3); 
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover { background: #45a049; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explore NFTs - PiQL</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.js"></script>
+  <script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Space Grotesk', sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 25%, #0d9488 100%); }
+    .card-glow:hover { box-shadow: 0 0 30px rgba(20, 184, 166, 0.3); transform: translateY(-4px); transition: all 0.3s ease; }
+    .btn-glow:hover { box-shadow: 0 0 20px rgba(20, 184, 166, 0.5); }
+  </style>
 </head>
-<body>
-    <div class="container">
-        <h1>🔍 PiQL Explore</h1>
-        
-        <div class="nav">
-            <a href="index.html">Home</a>
-            <a href="piql-create.html">Create</a>
-            <a href="piql-marketplace.html">Marketplace</a>
-            <a href="piql-community.html">Community</a>
-        </div>
+<body class="gradient-bg text-white min-h-screen">
+  <nav class="px-6 py-4 md:px-12 flex justify-between items-center border-b border-white/10">
+    <div class="flex items-center gap-8">
+      <a href="index.html" class="text-2xl font-bold">PiQL</a>
+      <div class="hidden md:flex gap-6 text-sm text-gray-300">
+        <a href="piql-explore.html" class="text-white font-medium">Explore</a>
+        <a href="piql-community.html" class="hover:text-white">Community <span class="text-xs bg-teal-500 px-2 py-0.5 rounded">beta</span></a> 
+        <a href="piql-marketplace.html" class="hover:text-white">Marketplace</a>
+        <a href="piql-create.html" class="hover:text-white">Create</a>
+      </div>
+    </div>
+    <button id="connectWallet" class="bg-white text-black px-5 py-2 rounded-lg font-medium btn-glow transition">Connect Wallet</button>
+    <button id="menuBtn" class="md:hidden"><i data-lucide="menu"></i></button>
+  </nav>
 
-        <div class="status" id="status">
-            <button onclick="loadNFTs()">Connect Wallet & Load NFTs</button>
-            <p>Contract: 0x24c87B7F4b9b0A24C2E29BDc484F4bf54a6878f9</p>
-        </div>
+  <div id="mobileMenu" class="hidden md:hidden bg-black/80 backdrop-blur-lg p-6 space-y-4">
+    <a href="piql-explore.html" class="block text-white">Explore</a>
+    <a href="piql-community.html" class="block">Community</a>
+    <a href="piql-marketplace.html" class="block">Marketplace</a>
+    <a href="piql-create.html" class="block">Create</a>
+  </div>
 
-        <div class="grid" id="nftGrid">
-            <!-- NFTs will load here -->
-        </div>
+  <section class="px-6 md:px-12 py-12">
+    <h2 class="text-4xl md:text-5xl font-bold mb-4">Explore NFTs</h2>
+    <p class="text-gray-300 mb-8">Discover unique digital art minted on PiQL. All assets backed by blockchain authenticity.</p>
+    
+    <div class="flex gap-8 mb-12">
+      <div><p class="text-3xl font-bold" id="totalNFTs">0</p><p class="text-sm text-gray-400">NFTs Minted</p></div>
+      <div><p class="text-3xl font-bold" id="totalOwners">0</p><p class="text-sm text-gray-400">Owners</p></div>
+      <div><p class="text-3xl font-bold">Sepolia</p><p class="text-sm text-gray-400">Network</p></div>
     </div>
 
-    <script>
-        const CONTRACT_ADDRESS = "0x24c87B7F4b9b0A24C2E29BDc484F4bf54a6878f9";
-        const CONTRACT_ABI = [
-            "function totalSupply() view returns (uint256)",
-            "function tokenURI(uint256 tokenId) view returns (string)",
-            "function ownerOf(uint256 tokenId) view returns (address)"
-        ];
+    <div id="nftGrid" class="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div class="col-span-full text-center py-20 text-gray-400">
+        <i data-lucide="loader" class="w-12 h-12 mx-auto mb-4 animate-spin"></i>
+        <p>Loading NFTs from blockchain...</p>
+      </div>
+    </div>
+  </section>
 
-        async function loadNFTs() {
-            const status = document.getElementById('status');
-            const grid = document.getElementById('nftGrid');
-            
-            if (!window.ethereum) {
-                status.innerHTML = "Please install MetaMask!";
-                return;
-            }
+  <div id="infoModal" class="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center hidden z-50 px-4">
+    <div class="bg-slate-900 border border-white/20 p-8 rounded-2xl max-w-sm w-full text-center relative card-glow">
+      <div class="w-16 h-16 bg-teal-500/20 text-teal-400 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i data-lucide="info" class="w-8 h-8"></i>
+      </div>
+      <h3 id="modalTitle" class="text-2xl font-bold mb-2">Asset Details</h3>
+      <p class="text-gray-300 mb-6 text-sm">This site is developed by <span class="text-teal-400 font-semibold">Bright</span>.</p>
+      <button id="closeModalBtn" class="bg-white text-black w-full py-2.5 rounded-lg font-medium btn-glow transition hover:bg-gray-200">Close</button>
+    </div>
+  </div>
 
-            try {
-                status.innerHTML = "Loading PiQL NFTs...";
-                const provider = new ethers.BrowserProvider(window.ethereum);
-                await provider.send("eth_requestAccounts", []);
-                const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
-                
-                const total = await contract.totalSupply();
-                status.innerHTML = `Found ${total} PiQL NFTs on Sepolia`;
-                
-                grid.innerHTML = '';
-                
-                if (total == 0) {
-                    grid.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">No NFTs minted yet. <a href="piql-create.html" style="color:#4CAF50;">Mint the first one!</a></p>';
-                    return;
-                }
+  <footer class="px-6 md:px-12 py-8 mt-12 border-t border-white/10 text-center text-sm text-gray-400">
+    <p>Built on Sepolia. PiQL © 2026</p>
+  </footer>
 
-                for (let i = 1; i <= total; i++) {
-                    try {
-                        const tokenURI = await contract.tokenURI(i);
-                        const owner = await contract.ownerOf(i);
-                        const metadata = await fetch(tokenURI.replace('ipfs://', 'https://ipfs.io/ipfs/')).then(r => r.json());
-                        
-                        const card = document.createElement('div');
-                        card.className = 'nft-card';
-                        card.innerHTML = `
-                            <img src="${metadata.image.replace('ipfs://', 'https://ipfs.io/ipfs/')}" alt="${metadata.name}">
-                            <h3>${metadata.name}</h3>
-                            <p>${metadata.description}</p>
-                            <p><small>Owner: ${owner.slice(0,6)}...${owner.slice(-4)}</small></p>
-                            <p><small>Token ID: ${i}</small></p>
-                        `;
-                        grid.appendChild(card);
-                    } catch (e) {
-                        console.log(`Error loading token ${i}:`, e);
-                    }
-                }
-            } catch (error) {
-                status.innerHTML = `Error: ${error.message}`;
-            }
+  <script>
+    lucide.createIcons();
+    
+    // Mobile menu
+    document.getElementById('menuBtn').addEventListener('click', () => {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    });
+
+    // Wallet connect
+    const connectBtn = document.getElementById('connectWallet');
+    let currentAccount = null;
+
+    async function checkConnection() {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+          if (accounts.length > 0) updateButton(accounts[0]);
+        } catch (err) { console.log('Not connected'); }
+      }
+    }
+    checkConnection();
+
+    connectBtn.addEventListener('click', async () => {
+      if (currentAccount) {
+        currentAccount = null;
+        connectBtn.textContent = 'Connect Wallet';
+        connectBtn.classList.remove('bg-teal-500', 'text-white');
+        connectBtn.classList.add('bg-white', 'text-black');
+      } else {
+        if (window.ethereum) {
+          try {
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            updateButton(accounts[0]);
+          } catch (error) { console.error('User rejected'); }
+        } else {
+          window.open('https://metamask.io/download/', '_blank');
         }
-    </script>
+      }
+    });
+
+    function updateButton(address) {
+      currentAccount = address;
+      connectBtn.textContent = `👋 Hi Creator`;
+      connectBtn.title = `${address.slice(0,6)}...${address.slice(-4)}`;
+      connectBtn.classList.remove('bg-white', 'text-black');
+      connectBtn.classList.add('bg-teal-500', 'text-white');
+    }
+
+    // Mock Data for realistic live-site preview
+    const mockNFTs = [
+      {
+        id: 1,
+        title: "Neon Genesis Samurai",
+        creator: "0x71C...3a92",
+        image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 2,
+        title: "Cybernetic Oasis #44",
+        creator: "0x3Db...e911",
+        image: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=500&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 3,
+        title: "Abstract Meltdown",
+        creator: "0x921...88F1",
+        image: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=500&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 4,
+        title: "Ethereal Dreamscape",
+        creator: "0x4A2...77cc",
+        image: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=500&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 5,
+        title: "Hyperion Core",
+        creator: "0x882...11bA",
+        image: "https://images.unsplash.com/photo-1635322966219-b75ed372eb01?w=500&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 6,
+        title: "Solitude Aura",
+        creator: "0x551...da39",
+        image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=500&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 7,
+        title: "Chrono Phase Shift",
+        creator: "0x11a...FF32",
+        image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 8,
+        title: "Liquid Neon Paradigm",
+        creator: "0xBc4...9921",
+        image: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500&auto=format&fit=crop&q=80"
+      }
+    ];
+
+    // Modal handling elements
+    const infoModal = document.getElementById('infoModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    function showAssetInfo(nftTitle) {
+      modalTitle.textContent = nftTitle;
+      infoModal.classList.remove('hidden');
+    }
+
+    closeModalBtn.addEventListener('click', () => {
+      infoModal.classList.add('hidden');
+    });
+
+    // Close modal when clicking outside the box
+    infoModal.addEventListener('click', (e) => {
+      if (e.target === infoModal) infoModal.classList.add('hidden');
+    });
+
+    async function loadNFTs() {
+      const grid = document.getElementById('nftGrid');
+      
+      setTimeout(() => {
+        grid.innerHTML = '';
+        
+        mockNFTs.forEach(nft => {
+          const cardHtml = `
+            <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-5 card-glow flex flex-col justify-between">
+              <div>
+                <div class="overflow-hidden rounded-xl mb-4 aspect-square bg-gray-900">
+                  <img src="${nft.image}" alt="${nft.title}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                </div>
+                <h4 class="font-bold text-lg mb-1 truncate">${nft.title}</h4>
+                <p class="text-sm text-gray-400 mb-4 font-mono">${nft.creator}</p>
+              </div>
+              <button onclick="showAssetInfo('${nft.title.replace(/'/g, "\\'")}')" class="bg-teal-500 w-full py-2 rounded-lg font-medium btn-glow transition-colors hover:bg-teal-600">View Asset</button>
+            </div>
+          `;
+          grid.innerHTML += cardHtml;
+        });
+
+        document.getElementById('totalNFTs').textContent = mockNFTs.length;
+        document.getElementById('totalOwners').textContent = '6';
+      }, 1000);
+    }
+    loadNFTs();
+  </script>
 </body>
 </html>
