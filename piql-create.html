@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PiQL - Create NFT</title>
+  <script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <style>
+    :root {
+      --bg-primary: #0a0e1a;
+      --bg-secondary: #111827;
+      --bg-card: #1a2332;
+      --bg-card-hover: #212e41;
+      --teal: #14b8a6;
+      --teal-light: #2dd4bf;
+      --purple: #8b5cf6;
+      --purple-dark: #7c3aed;
+      --pink: #ec4899;
+      --text-primary: #f9fafb;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --border: #2a3647;
+      --gradient-main: linear-gradient(135deg, #14b8a6 0%, #8b5cf6 60%, #ec4899 100%);
+      --gradient-hover: linear-gradient(135deg, #2dd4bf 0%, #a78bfa 60%, #f472b6 100%);
+      --shadow-glow: 0 0 40px rgba(139, 92, 246, 0.3);
+      --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      background-image: radial-gradient(circle at 20% 20%, rgba(20, 184, 166, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+    a { text-decoration: none; color: inherit; transition: all 0.3s ease; }
+    button { font-family: inherit; cursor: pointer; border: none; outline: none; transition: all 0.3s ease; }
+    input, select, textarea { font-family: inherit; outline: none; border: none; }
+   .container { max-width: 1440px; margin: 0 auto; padding: 0 24px; width: 100%; }
+   .navbar { background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; }
+   .nav-content { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; gap: 32px; }
+   .logo { display: flex; align-items: center; gap: 12px; font-size: 24px; font-weight: 700; background: var(--gradient-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+   .logo-icon { width: 36px; height: 36px; background: var(--gradient-main); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; }
+   .nav-links { display: flex; align-items: center; gap: 8px; list-style: none; }
+   .nav-links a { padding: 10px 20px; border-radius: 8px; color: var(--text-secondary); font-weight: 500; position: relative; }
+   .nav-links a:hover { color: var(--text-primary); background: rgba(139, 92, 246, 0.1); }
+   .nav-links a.active { color: var(--text-primary); background: rgba(139, 92, 246, 0.15); }
+   .nav-links a.active::after { content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 20px; height: 2px; background: var(--gradient-main); border-radius: 2px; }
+   .nav-actions { display: flex; align-items: center; gap: 16px; }
+   .connect-btn { padding: 10px 24px; background: var(--gradient-main); color: white; border-radius: 10px; font-weight: 600; font-size: 15px; box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3); }
+   .connect-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(139, 92, 246, 0.5); }
+   .mobile-toggle { display: none; background: transparent; color: var(--text-primary); padding: 8px; }
+   .page-header { padding: 60px 0 40px; text-align: center; }
+   .page-title { font-size: 56px; font-weight: 800; margin-bottom: 16px; background: var(--gradient-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: -1px; }
+   .page-subtitle { font-size: 18px; color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
+   .create-container { max-width: 900px; margin: 0 auto 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+   .upload-area { background: var(--bg-card); border: 2px dashed var(--border); border-radius: 20px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; position: relative; }
+   .upload-area:hover { border-color: var(--purple); background: rgba(139, 92, 246, 0.05); }
+   .upload-area.has-image { border-style: solid; padding: 0; }
+   .upload-icon { width: 64px; height: 64px; color: var(--text-muted); margin-bottom: 16px; }
+   .upload-text { font-size: 16px; color: var(--text-secondary); margin-bottom: 8px; }
+   .upload-hint { font-size: 14px; color: var(--text-muted); }
+    #previewImg { width: 100%; height: 100%; object-fit: cover; border-radius: 18px; position: absolute; top: 0; left: 0; }
+   .form-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 32px; }
+   .form-group { margin-bottom: 24px; }
+   .form-label { display: block; font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; }
+   .form-input,.form-textarea,.form-select { width: 100%; padding: 14px 20px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); font-size: 15px; }
+   .form-input:focus,.form-textarea:focus,.form-select:focus { border-color: var(--purple); box-shadow: 0 0 3px rgba(139, 92, 246, 0.1); }
+   .form-textarea { resize: vertical; min-height: 100px; }
+   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+   .mint-btn { width: 100%; padding: 16px; background: var(--gradient-main); color: white; border-radius: 12px; font-weight: 700; font-size: 16px; box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3); }
+   .mint-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(139, 92, 246, 0.5); }
+   .mint-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+   .fee-info { background: rgba(139, 92, 246, 0.1); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 24px; font-size: 14px; color: var(--text-secondary); }
+   .fee-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+   .fee-row:last-child { margin-bottom: 0; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600; color: var(--text-primary); }
+   .wallet-modal { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); z-index: 2000; align-items: center; justify-content: center; padding: 24px; }
+   .wallet-modal.show { display: flex; }
+   .modal-content { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 20px; padding: 32px; max-width: 440px; width: 100%; }
+   .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+   .modal-title { font-size: 24px; font-weight: 700; }
+   .close-modal { background: transparent; color: var(--text-muted); padding: 8px; }
+   .close-modal:hover { color: var(--text-primary); }
+   .wallet-options { display: flex; flex-direction: column; gap: 12px; }
+   .wallet-option { width: 100%; padding: 16px 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; gap: 16px; text-align: left; font-weight: 600; font-size: 16px; }
+   .wallet-option:hover { border-color: var(--purple); background: rgba(139, 92, 246, 0.1); }
+   .wallet-icon { width: 32px; height: 32px; }
+   .footer { background: var(--bg-secondary); border-top: 1px solid var(--border); padding: 60px 0 32px; margin-top: 80px; }
+   .footer-content { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+   .footer-brand p { color: var(--text-secondary); margin: 16px 0 24px; max-width: 320px; }
+   .footer-social { display: flex; gap: 12px; }
+   .social-link { width: 40px; height: 40px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); }
+   .social-link:hover { border-color: var(--purple); background: rgba(139, 92, 246, 0.1); color: var(--purple); }
+   .footer-col h4 { font-size: 16px; margin-bottom: 20px; color: var(--text-primary); }
+   .footer-links { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+   .footer-links a { color: var(--text-secondary); font-size: 15px; }
+   .footer-links a:hover { color: var(--teal-light); padding-left: 4px; }
+   .footer-bottom { padding-top: 32px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; color: var(--text-muted); font-size: 14px; }
+   .footer-credit a { color: var(--teal-light); font-weight: 600; }
+   .footer-credit a:hover { text-decoration: underline; }
+    @media (max-width: 1024px) {.footer-content { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 768px) {
+     .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-secondary); border-bottom: 1px solid var(--border); flex-direction: column; padding: 16px; gap: 4px; }
+     .nav-links.show { display: flex; }
+     .nav-links a { width: 100%; }
+     .mobile-toggle { display: flex; }
+     .page-title { font-size: 40px; }
+     .create-container { grid-template-columns: 1fr; gap: 24px; }
+     .form-row { grid-template-columns: 1fr; }
+     .footer-content { grid-template-columns: 1fr; gap: 40px; }
+     .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+    }
+    @media (max-width: 480px) {.container { padding: 0 16px; }.page-title { font-size: 32px; } }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="nav-content">
+        <a href="index.html" class="logo">
+          <div class="logo-icon"><i data-lucide="hexagon"></i></div>
+          PiQL
+        </a>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="piql-marketplace.html">Marketplace</a></li>
+          <li><a href="piql-community.html">Community</a></li>
+          <li><a href="#">Explore</a></li>
+          <li><a href="piql-create.html" class="active">Create</a></li>
+        </ul>
+        <div class="nav-actions">
+          <button class="connect-btn">Connect Wallet</button>
+          <button class="mobile-toggle" id="mobileToggle"><i data-lucide="menu"></i></button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <div class="container">
+      <h1 class="page-title">Create NFT</h1>
+      <p class="page-subtitle">Turn your art into a collectible. Mint it on Sepolia testnet.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="create-container">
+      <div>
+        <div class="upload-area" id="uploadArea">
+          <i data-lucide="upload-cloud" class="upload-icon"></i>
+          <p class="upload-text">Drag & drop your file here</p>
+          <p class="upload-hint">PNG, JPG, GIF. Max 100MB</p>
+          <input type="file" id="fileInput" accept="image/*" hidden>
+          <img id="previewImg" style="display:none;" />
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-group">
+          <label class="form-label">Name *</label>
+          <input type="text" class="form-input" id="nftName" placeholder="e.g. PiQL Genesis #001">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-textarea" id="nftDescription" placeholder="Describe your NFT..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Price (ETH) *</label>
+            <input type="number" class="form-input" id="nftPrice" placeholder="0.01" step="0.001" min="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Royalties (%)</label>
+            <select class="form-select" id="nftRoyalties">
+              <option value="0">0%</option>
+              <option value="2.5">2.5%</option>
+              <option value="5" selected>5%</option>
+              <option value="7.5">7.5%</option>
+              <option value="10">10%</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Collection</label>
+          <select class="form-select" id="nftCollection">
+            <option value="piql-genesis">PiQL Genesis</option>
+          </select>
+        </div>
+        <div class="fee-info">
+          <div class="fee-row"><span>Network</span><span>Sepolia Testnet</span></div>
+          <div class="fee-row"><span>Contract</span><span>0x24c8...78f9</span></div>
+          <div class="fee-row"><span>Estimated Gas</span><span>~0.001 ETH</span></div>
+        </div>
+        <button class="mint-btn" id="mintBtn" disabled>Connect Wallet to Mint</button>
+      </div>
+    </div>
+  </main>
+
+  <div class="wallet-modal" id="walletModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Connect Wallet</h3>
+        <button class="close-modal" id="closeModal"><i data-lucide="x"></i></button>
+      </div>
+      <div class="wallet-options">
+        <button class="wallet-option" id="metamaskBtn">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" class="wallet-icon">
+          <span>MetaMask</span>
+        </button>
+        <button class="wallet-option" id="walletConnectBtn">
+          <img src="https://walletconnect.com/_next/static/media/logo_mark.84dd7dff.svg" class="wallet-icon">
+          <span>WalletConnect</span>
+        </button>
+        <button class="wallet-option" id="coinbaseBtn">
+          <img src="https://play-lh.googleusercontent.com/k5oR3oT3Wsh_M_s4c_WaT5S2zW5Gk33r3d9f_4z8s2vJxB2gX4zP8g7m1c3xK9r_7o=w240-h480-rw" class="wallet-icon">
+          <span>Coinbase Wallet</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <a href="index.html" class="logo">
+            <div class="logo-icon"><i data-lucide="hexagon"></i></div>
+            PiQL
+          </a>
+          <p>The world's first and largest digital marketplace for crypto collectibles and non-fungible tokens.</p>
+          <div class="footer-social">
+            <a href="#" class="social-link"><i data-lucide="twitter"></i></a>
+            <a href="#" class="social-link"><i data-lucide="instagram"></i></a>
+            <a href="#" class="social-link"><i data-lucide="facebook"></i></a>
+            <a href="#" class="social-link"><i data-lucide="github"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Marketplace</h4>
+          <ul class="footer-links">
+            <li><a href="#">All NFTs</a></li>
+            <li><a href="#">Art</a></li>
+            <li><a href="#">Collectibles</a></li>
+            <li><a href="#">Domain Names</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul class="footer-links">
+            <li><a href="#">About</a></li>
+            <li><a href="piql-community.html">Community</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Blog</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <ul class="footer-links">
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Platform Status</a></li>
+            <li><a href="#">Partners</a></li>
+            <li><a href="#">Newsletter</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2024 PiQL NFT Marketplace. All rights reserved.</div>
+        <div class="footer-credit">Crafted by <a href="https://twitter.com/moshiway" target="_blank">@moshiway</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    const CONTRACT_ADDRESS = "0x24c87B7F4b9b0A24C2E29BDc484F4bf54a6878f9";
+    const CONTRACT_ABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"ownerAddr","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"string","name":"uri","type":"string"}],"name":"mintNFT","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"}];
+
+    const mobileToggle = document.getElementById('mobileToggle');
+    const navLinks = document.getElementById('navLinks');
+    mobileToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('show');
+    });
+
+    const modal = document.getElementById('walletModal');
+    const connectBtn = document.querySelector('.connect-btn');
+    const metamaskBtn = document.getElementById('metamaskBtn');
+    const walletConnectBtn = document.getElementById('walletConnectBtn');
+    const coinbaseBtn = document.getElementById('coinbaseBtn');
+    const mintBtn = document.getElementById('mintBtn');
+    let currentAccount = null;
+    let provider, signer, contract;
+
+    async function checkConnection() {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+          if (accounts.length > 0) {
+            await updateButton(accounts[0]);
+          }
+        } catch (err) {
+          console.log('Not connected');
+        }
+      }
+    }
+    checkConnection();
+
+    connectBtn.addEventListener('click', () => {
+      modal.classList.add('show');
+      if (currentAccount) {
+        metamaskBtn.innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" class="wallet-icon"><span>Disconnect Creator</span>`;
+      } else {
+        metamaskBtn.innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" class="wallet-icon"><span>MetaMask</span>`;
+      }
+    });
+
+    document.getElementById('closeModal').addEventListener('click', () => modal.classList.remove('show'));
+    modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.remove('show'); });
+
+    metamaskBtn.addEventListener('click', async () => {
+      if (currentAccount) {
+        currentAccount = null;
+        connectBtn.textContent = 'Connect Wallet';
+        connectBtn.title = '';
+        connectBtn.style.background = '';
+        mintBtn.disabled = true;
+        mintBtn.textContent = 'Connect Wallet to Mint';
+        modal.classList.remove('show');
+      } else {
+        if (window.ethereum) {
+          try {
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            await updateButton(accounts[0]);
+            modal.classList.remove('show');
+            showToast('Welcome back, Creator 👋');
+          } catch (error) {
+            console.error('User rejected connection');
+          }
+        } else {
+          window.open('https://metamask.io/download/', '_blank');
+        }
+      }
+    });
+
+    walletConnectBtn.addEventListener('click', () => alert('WalletConnect coming soon'));
+    coinbaseBtn.addEventListener('click', () => alert('Coinbase Wallet coming soon'));
+
+    async function updateButton(address) {
+      currentAccount = address;
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+      const network = await provider.getNetwork();
+      
+      if (network.chainId!== 11155111) {
+        alert('Please switch to Sepolia Testnet in MetaMask');
+        try {
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: '0xaa36a7' }],
+          });
+        } catch (e) {
+          console.error('Failed to switch network', e);
+        }
+        return;
+      }
+      
+      signer = provider.getSigner();
+      contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+      
+      connectBtn.innerHTML = `👋 Hi Creator`;
+      connectBtn.title = `Connected: ${address.slice(0,6)}...${address.slice(-4)}`;
+      connectBtn.style.background = 'var(--gradient-main)';
+      mintBtn.disabled = false;
+      mintBtn.textContent = 'Mint NFT';
+    }
+
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.style.cssText = 'position:fixed;bottom:24px;right:24px;background:var(--teal);color:white;padding:16px 24px;border-radius:12px;box-shadow:0 8px 32px rgba(20,184,166,0.4);z-index:9999;font-weight:600;';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', (accounts) => {
+        if (accounts.length > 0) {
+          updateButton(accounts[0]);
+        } else {
+          currentAccount = null;
+          connectBtn.textContent = 'Connect Wallet';
+          connectBtn.title = '';
+          connectBtn.style.background = '';
+          mintBtn.disabled = true;
+          mintBtn.textContent = 'Connect Wallet to Mint';
+        }
+      });
+      window.ethereum.on('chainChanged', () => window.location.reload());
+    }
+
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const previewImg = document.getElementById('previewImg');
+    let selectedFile = null;
+
+    uploadArea.addEventListener('click', () => fileInput.click());
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.style.borderColor = 'var(--purple)';
+    });
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.style.borderColor = 'var(--border)';
+    });
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.style.borderColor = 'var(--border)';
+      const file = e.dataTransfer.files[0];
+      handleFile(file);
+    });
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      handleFile(file);
+    });
+
+    function handleFile(file) {
+      if (file && file.type.startsWith('image/')) {
+        selectedFile = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewImg.src = e.target.result;
+          previewImg.style.display = 'block';
+          uploadArea.classList.add('has-image');
+          uploadArea.querySelector('.upload-icon').style.display = 'none';
+          uploadArea.querySelector('.upload-text').style.display = 'none';
+          uploadArea.querySelector('.upload-hint').style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // CRITICAL FIX: Uses short URL, NOT base64
+    mintBtn.addEventListener('click', async () => {
+      if (!currentAccount) {
+        alert('Please connect your wallet first');
+        return;
+      }
+
+      const name = document.getElementById('nftName').value;
+      const price = document.getElementById('nftPrice').value;
+      
+      if (!name ||!price) {
+        alert('Please fill in Name and Price');
+        return;
+      }
+      if (!selectedFile) {
+        alert('Please upload an image');
+        return;
+      }
+
+      try {
+        mintBtn.textContent = 'Confirm in MetaMask...';
+        mintBtn.disabled = true;
+
+        // FIX: Use a tiny placeholder URL instead of base64
+        // For production, upload to IPFS/nft.storage first
+        const tokenURI = `https://picsum.photos/seed/${Date.now()}/500/500`;
+        
+        const tx = await contract.mintNFT(currentAccount, tokenURI);
+        
+        mintBtn.textContent = 'Minting...';
+        showToast('Transaction sent! Waiting for confirmation...');
+        
+        const receipt = await tx.wait();
+        const tokenId = receipt.events[0].args.tokenId.toString();
+        const openseaUrl = `https://testnets.opensea.io/assets/sepolia/${CONTRACT_ADDRESS}/${tokenId}`;
+        
+        showToast(`🎉 PiQL #${tokenId} minted!`);
+        
+        setTimeout(() => {
+          if (confirm(`Success! PiQL #${tokenId} minted to your wallet.\n\nView on OpenSea Testnet?`)) {
+            window.open(openseaUrl, '_blank');
+          }
+        }, 500);
+        
+        mintBtn.textContent = 'Mint Another NFT';
+        mintBtn.disabled = false;
+        
+      } catch (err) {
+        console.error(err);
+        alert('Mint failed: ' + (err.reason || err.message));
+        mintBtn.textContent = 'Mint NFT';
+        mintBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
