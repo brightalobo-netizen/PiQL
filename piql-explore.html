@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PiQL Explore - Browse NFTs</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.1/dist/ethers.umd.min.js"></script>
+    <style>
+        body { 
+            font-family: 'Arial', sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; 
+            margin: 0; 
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 30px; }
+        .nav { text-align: center; margin-bottom: 30px; }
+        .nav a { 
+            color: white; 
+            text-decoration: none; 
+            margin: 0 15px; 
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+        }
+        .nav a:hover { background: rgba(255,255,255,0.3); }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+            gap: 20px; 
+        }
+        .nft-card { 
+            background: rgba(255,255,255,0.1); 
+            border-radius: 15px; 
+            padding: 15px; 
+            backdrop-filter: blur(10px);
+        }
+        .nft-card img { 
+            width: 100%; 
+            height: 250px; 
+            object-fit: cover; 
+            border-radius: 10px; 
+        }
+        .status { 
+            text-align: center; 
+            padding: 20px; 
+            background: rgba(0,0,0,0.3); 
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover { background: #45a049; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 PiQL Explore</h1>
+        
+        <div class="nav">
+            <a href="index.html">Home</a>
+            <a href="piql-create.html">Create</a>
+            <a href="piql-marketplace.html">Marketplace</a>
+            <a href="piql-community.html">Community</a>
+        </div>
+
+        <div class="status" id="status">
+            <button onclick="loadNFTs()">Connect Wallet & Load NFTs</button>
+            <p>Contract: 0x24c87B7F4b9b0A24C2E29BDc484F4bf54a6878f9</p>
+        </div>
+
+        <div class="grid" id="nftGrid">
+            <!-- NFTs will load here -->
+        </div>
+    </div>
+
+    <script>
+        const CONTRACT_ADDRESS = "0x24c87B7F4b9b0A24C2E29BDc484F4bf54a6878f9";
+        const CONTRACT_ABI = [
+            "function totalSupply() view returns (uint256)",
+            "function tokenURI(uint256 tokenId) view returns (string)",
+            "function ownerOf(uint256 tokenId) view returns (address)"
+        ];
+
+        async function loadNFTs() {
+            const status = document.getElementById('status');
+            const grid = document.getElementById('nftGrid');
+            
+            if (!window.ethereum) {
+                status.innerHTML = "Please install MetaMask!";
+                return;
+            }
+
+            try {
+                status.innerHTML = "Loading PiQL NFTs...";
+                const provider = new ethers.BrowserProvider(window.ethereum);
+                await provider.send("eth_requestAccounts", []);
+                const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
+                
+                const total = await contract.totalSupply();
+                status.innerHTML = `Found ${total} PiQL NFTs on Sepolia`;
+                
+                grid.innerHTML = '';
+                
+                if (total == 0) {
+                    grid.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">No NFTs minted yet. <a href="piql-create.html" style="color:#4CAF50;">Mint the first one!</a></p>';
+                    return;
+                }
+
+                for (let i = 1; i <= total; i++) {
+                    try {
+                        const tokenURI = await contract.tokenURI(i);
+                        const owner = await contract.ownerOf(i);
+                        const metadata = await fetch(tokenURI.replace('ipfs://', 'https://ipfs.io/ipfs/')).then(r => r.json());
+                        
+                        const card = document.createElement('div');
+                        card.className = 'nft-card';
+                        card.innerHTML = `
+                            <img src="${metadata.image.replace('ipfs://', 'https://ipfs.io/ipfs/')}" alt="${metadata.name}">
+                            <h3>${metadata.name}</h3>
+                            <p>${metadata.description}</p>
+                            <p><small>Owner: ${owner.slice(0,6)}...${owner.slice(-4)}</small></p>
+                            <p><small>Token ID: ${i}</small></p>
+                        `;
+                        grid.appendChild(card);
+                    } catch (e) {
+                        console.log(`Error loading token ${i}:`, e);
+                    }
+                }
+            } catch (error) {
+                status.innerHTML = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
