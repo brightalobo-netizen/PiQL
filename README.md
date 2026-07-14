@@ -1,4 +1,7 @@
- PiQL 🎨
+PiQL 🎨
+
+📐 [System Architecture](./ARCHITECTURE.md) — SQL schema, API design, scaling plan
+
 
 Mint, Trade, and Earn with PiQL NFTs on Sepolia Testnet
 
