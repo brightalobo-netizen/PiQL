@@ -1,0 +1,16 @@
+{
+  "wallet_address": "0xFA6f1Ea568C765B8473bA2cAd23d822d2226EC68",
+  "username": "User_fa6f",
+  "bio": "NFT creator from Shenzhen",
+  "avatar_uri": "https://i.pravatar.cc/150?u=fa6f",
+  "created_at": "2026-07-14T19:28:00Z",
+  "updated_at": "2026-07-14T19:28:00Z",
+  "stats": {
+    "artworks_created": 0,
+    "nfts_owned": 0
+  },
+  "links": {
+    "opensea": "https://opensea.io/0xFA6f1Ea568C765B8473bA2cAd23d822d2226EC68",
+    "etherscan": "https://sepolia.etherscan.io/address/0xFA6f1Ea568C765B8473bA2cAd23d822d2226EC68"
+  }
+}
