@@ -9,9 +9,9 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
     body { font-family: 'Space Grotesk', sans-serif; }
-   .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 25%, #0d9488 100%); }
-   .card-glow:hover { box-shadow: 0 0 30px rgba(20, 184, 166, 0.3); transform: translateY(-4px); transition: all 0.3s ease; }
-   .btn-glow:hover { box-shadow: 0 0 20px rgba(20, 184, 166, 0.5); }
+  .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 25%, #0d9488 100%); }
+  .card-glow:hover { box-shadow: 0 0 30px rgba(20, 184, 166, 0.3); transform: translateY(-4px); transition: all 0.3s ease; }
+  .btn-glow:hover { box-shadow: 0 0 20px rgba(20, 184, 166, 0.5); }
   </style>
 </head>
 <body class="gradient-bg text-white min-h-screen">
@@ -195,37 +195,45 @@
 
   <!-- Footer -->
   <footer class="px-6 md:px-12 py-8 mt-12 border-t border-white/10 text-center text-sm text-gray-400">
-    <p>Design by @moshiway on Figma. Built with Tailwind CSS.</p>
+    <p class="mb-2">Design by @moshiway on Figma. Built with Tailwind CSS.</p>
+    <a href="https://github.com/brightalobo-netizen/PiQL" class="text-teal-400 hover:underline">View Source on GitHub →</a>
   </footer>
 
   <script>
     lucide.createIcons();
     
-    // ===== PiQL DB - LocalStorage Implementation per ARCHITECTURE.md Section 3.2 =====
-    const PiQLDB = {
-      getUser(wallet) {
-        const users = JSON.parse(localStorage.getItem('piql_users') || '{}');
-        return users[wallet.toLowerCase()] || null;
+    // ===== PiQL API Client - REST Implementation per ARCHITECTURE.md =====
+    const PiQL_API = {
+      baseURL: 'https://brightalobo-netizen.github.io/PiQL/api',
+      
+      async getUser(wallet) {
+        const shortWallet = wallet.slice(2,6).toLowerCase();
+        try {
+          const res = await fetch(`${this.baseURL}/users/${shortWallet}.json`);
+          if (!res.ok) throw new Error('User not found');
+          return await res.json();
+        } catch {
+          // Fallback to LocalStorage cache if API fails
+          const users = JSON.parse(localStorage.getItem('piql_users') || '{}');
+          return users[wallet.toLowerCase()] || null;
+        }
       },
       
-      createUser(wallet) {
-        const users = JSON.parse(localStorage.getItem('piql_users') || '{}');
-        const username = `User_${wallet.slice(2,6)}`;
+      async createUser(wallet) {
+        const shortWallet = wallet.slice(2,6);
         const user = {
           wallet_address: wallet.toLowerCase(),
-          username: username,
+          username: `User_${shortWallet}`,
           bio: null,
-          avatar_uri: null,
+          avatar_uri: `https://i.pravatar.cc/150?u=${shortWallet}`,
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
+          stats: { artworks_created: 0, nfts_owned: 0 }
         };
+        const users = JSON.parse(localStorage.getItem('piql_users') || '{}');
         users[wallet.toLowerCase()] = user;
         localStorage.setItem('piql_users', JSON.stringify(users));
         return user;
-      },
-
-      getAllUsers() {
-        return JSON.parse(localStorage.getItem('piql_users') || '{}');
       }
     };
 
@@ -244,30 +252,31 @@
 
     // Check if already connected on page load
     async function checkConnection() {
-      if (window.ethereum) {
+      if (typeof window.ethereum!== 'undefined') {
         try {
           const accounts = await window.ethereum.request({ method: 'eth_accounts' });
           if (accounts.length > 0) {
-            updateButton(accounts[0]);
+            await updateButton(accounts[0]);
           }
         } catch (err) {
-          console.log('Not connected');
+          // Silent fail
         }
       }
     }
-    checkConnection();
+    window.addEventListener('load', checkConnection);
 
-    // Open modal on click
+    // Open modal or copy address on click
     connectBtn.addEventListener('click', () => {
-      modal.classList.remove('hidden');
+      if (!window.ethereum) {
+        showToast('Please open in MetaMask browser');
+        return;
+      }
       
-      // If connected, show disconnect option
       if (currentAccount) {
-        metamaskBtn.innerHTML = `
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" class="w-8 h-8">
-          <span class="font-medium">Disconnect</span>
-        `;
+        navigator.clipboard.writeText(currentAccount);
+        showToast('Address copied: ' + currentAccount.slice(0,6) + '...' + currentAccount.slice(-4));
       } else {
+        modal.classList.remove('hidden');
         metamaskBtn.innerHTML = `
           <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" class="w-8 h-8">
           <span class="font-medium">MetaMask</span>
@@ -279,59 +288,39 @@
     document.getElementById('closeModal').addEventListener('click', () => modal.classList.add('hidden'));
     modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.add('hidden'); });
 
-    // MetaMask connect OR disconnect
+    // MetaMask connect
     metamaskBtn.addEventListener('click', async () => {
-      if (currentAccount) {
-        // Disconnect flow
-        currentAccount = null;
-        connectBtn.textContent = 'Connect Wallet';
-        connectBtn.title = '';
-        connectBtn.classList.remove('bg-teal-500', 'text-white');
-        connectBtn.classList.add('bg-white', 'text-black');
-        modal.classList.add('hidden');
-        showToast('Wallet disconnected');
-      } else {
-        // Connect flow
-        if (window.ethereum) {
-          try {
-            connectBtn.textContent = 'Connecting...';
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            await updateButton(accounts[0]);
-            modal.classList.add('hidden');
-          } catch (error) {
-            console.error('User rejected connection');
-            connectBtn.textContent = 'Connect Wallet';
-            showToast('Connection cancelled');
-          }
-        } else {
-          window.open('https://metamask.io/download/', '_blank');
+      if (window.ethereum) {
+        try {
+          connectBtn.textContent = 'Connecting...';
+          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+          await updateButton(accounts[0]);
+          modal.classList.add('hidden');
+        } catch (error) {
+          connectBtn.textContent = 'Connect Wallet';
+          showToast('Connection cancelled');
         }
+      } else {
+        window.open('https://metamask.io/download/', '_blank');
       }
     });
 
-    // WalletConnect + Coinbase - placeholder
-    walletConnectBtn.addEventListener('click', () => {
-      showToast('WalletConnect coming soon');
-    });
-    coinbaseBtn.addEventListener('click', () => {
-      showToast('Coinbase Wallet coming soon');
-    });
+    walletConnectBtn.addEventListener('click', () => showToast('WalletConnect coming soon'));
+    coinbaseBtn.addEventListener('click', () => showToast('Coinbase Wallet coming soon'));
 
-    // Update UI after connection - NOW WITH LOCALSTORAGE DB
+    // Update UI after connection - NOW USES REST API
     async function updateButton(address) {
       currentAccount = address;
-      connectBtn.title = `Connected: ${address.slice(0,6)}...${address.slice(-4)}`;
+      connectBtn.title = address;
       
-      // Get or create user from LocalStorage DB per ARCHITECTURE.md
-      let user = PiQLDB.getUser(address);
+      let user = await PiQL_API.getUser(address);
       if (!user) {
-        user = PiQLDB.createUser(address);
+        user = await PiQL_API.createUser(address);
         showToast(`Welcome to PiQL, ${user.username} 👋`);
       } else {
         showToast(`Welcome back, ${user.username} 👋`);
       }
       
-      // Update UI
       connectBtn.textContent = `👋 ${user.username}`;
       connectBtn.classList.remove('bg-white', 'text-black');
       connectBtn.classList.add('bg-teal-500', 'text-white');
@@ -379,4 +368,4 @@
     }, 1000);
   </script>
 </body>
-        </html>
+  </html>
