@@ -3,48 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Explore NFTs - PiQL</title>
+  <title>Explore NFTs - PiQL | Built by Bright Alobo</title>
+  <meta property="og:title" content="Explore NFTs - PiQL" />
+  <meta property="og:description" content="Discover unique digital art minted on PiQL. Sepolia testnet live — Full-stack build by Bright Alobo, UI by @moshiway" />
+  <meta property="og:image" content="https://brightalobo-netizen.github.io/PiQL/piql-thumbnail.png" />
+  <meta property="og:url" content="https://brightalobo-netizen.github.io/PiQL/piql-explore.html" />
+  <meta name="twitter:card" content="summary_large_image" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.js"></script>
-  <script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
     body { font-family: 'Space Grotesk', sans-serif; }
-    .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 25%, #0d9488 100%); }
-    .card-glow:hover { box-shadow: 0 0 30px rgba(20, 184, 166, 0.3); transform: translateY(-4px); transition: all 0.3s ease; }
-    .btn-glow:hover { box-shadow: 0 0 20px rgba(20, 184, 166, 0.5); }
+    .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 25%, #0d9488 100%); background-attachment: fixed; }
+    .card-glow { transition: all 0.4s cubic-bezier(0.4,0,0.2,1); }
+    .card-glow:hover { box-shadow: 0 0 30px rgba(20, 184, 166, 0.4), 0 10px 40px rgba(0,0,0,0.4); transform: translateY(-8px); border-color: rgba(20, 184, 166, 0.5) !important; }
+    .btn-glow:hover { box-shadow: 0 0 20px rgba(20, 184, 166, 0.6); transform: translateY(-1px); }
+    .like-btn.liked { color: #ec4899 !important; background: rgba(236,72,153,0.2) !important; border-color: rgba(236,72,153,0.3) !important; }
+    #toastContainer { position: fixed; bottom: 24px; right: 24px; z-index: 10000; display: flex; flex-direction: column; gap: 12px; pointer-events: none; }
+    .toast { background: rgba(15,23,42,0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 14px 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); font-weight: 500; font-size: 14px; display: flex; align-items: center; gap: 10px; min-width: 280px; animation: toastIn 0.3s ease; pointer-events: auto; }
+    .toast.success { border-color: #14b8a6; background: rgba(20,184,166,0.15); }
+    .toast.info { border-color: #8b5cf6; background: rgba(139,92,246,0.15); }
+    @keyframes toastIn { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:translateX(0); } }
   </style>
 </head>
 <body class="gradient-bg text-white min-h-screen">
-  <nav class="px-6 py-4 md:px-12 flex justify-between items-center border-b border-white/10">
+  <nav class="px-6 py-4 md:px-12 flex justify-between items-center border-b border-white/10 sticky top-0 z-40 bg-[#0f172a]/80 backdrop-blur-lg">
     <div class="flex items-center gap-8">
       <a href="index.html" class="text-2xl font-bold">PiQL</a>
       <div class="hidden md:flex gap-6 text-sm text-gray-300">
-        <a href="piql-explore.html" class="text-white font-medium">Explore</a>
+        <a href="piql-explore.html" class="text-white font-medium border-b-2 border-teal-500 pb-1">Explore</a>
         <a href="piql-community.html" class="hover:text-white">Community <span class="text-xs bg-teal-500 px-2 py-0.5 rounded">beta</span></a> 
         <a href="piql-marketplace.html" class="hover:text-white">Marketplace</a>
+        <a href="piql-blog.html" class="hover:text-white">Blog</a>
         <a href="piql-create.html" class="hover:text-white">Create</a>
       </div>
     </div>
-    <button id="connectWallet" class="bg-white text-black px-5 py-2 rounded-lg font-medium btn-glow transition">Connect Wallet</button>
-    <button id="menuBtn" class="md:hidden"><i data-lucide="menu"></i></button>
+    <div class="flex items-center gap-3">
+      <button id="connectWallet" class="bg-white text-black px-6 py-2.5 rounded-lg font-medium btn-glow transition text-[15px] leading-none">Connect Wallet</button>
+      <button id="menuBtn" class="md:hidden p-2"><i data-lucide="menu"></i></button>
+    </div>
   </nav>
 
-  <div id="mobileMenu" class="hidden md:hidden bg-black/80 backdrop-blur-lg p-6 space-y-4">
-    <a href="piql-explore.html" class="block text-white">Explore</a>
-    <a href="piql-community.html" class="block">Community</a>
-    <a href="piql-marketplace.html" class="block">Marketplace</a>
-    <a href="piql-create.html" class="block">Create</a>
+  <div id="mobileMenu" class="hidden md:hidden bg-black/90 backdrop-blur-lg p-6 space-y-4 border-b border-white/10 sticky top-[65px] z-30">
+    <a href="piql-explore.html" class="block text-white font-medium">Explore</a>
+    <a href="piql-community.html" class="block text-gray-300">Community</a>
+    <a href="piql-marketplace.html" class="block text-gray-300">Marketplace</a>
+    <a href="piql-blog.html" class="block text-gray-300">Blog</a>
+    <a href="piql-create.html" class="block text-gray-300">Create</a>
   </div>
 
   <section class="px-6 md:px-12 py-12">
-    <h2 class="text-4xl md:text-5xl font-bold mb-4">Explore NFTs</h2>
-    <p class="text-gray-300 mb-8">Discover unique digital art minted on PiQL. All assets backed by blockchain authenticity.</p>
-    
-    <div class="flex gap-8 mb-12">
-      <div><p class="text-3xl font-bold" id="totalNFTs">0</p><p class="text-sm text-gray-400">NFTs Minted</p></div>
-      <div><p class="text-3xl font-bold" id="totalOwners">0</p><p class="text-sm text-gray-400">Owners</p></div>
-      <div><p class="text-3xl font-bold">Sepolia</p><p class="text-sm text-gray-400">Network</p></div>
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+      <div>
+        <h2 class="text-4xl md:text-5xl font-bold mb-4">Explore NFTs</h2>
+        <p class="text-gray-300 max-w-xl">Discover unique digital art minted on PiQL. All assets backed by blockchain authenticity on Sepolia.</p>
+      </div>
+      <div class="flex gap-3">
+        <div class="bg-white/5 border border-white/10 rounded-xl px-4 py-3 backdrop-blur">
+          <p class="text-2xl font-bold" id="totalNFTs">0</p><p class="text-xs text-gray-400">NFTs Minted</p>
+        </div>
+        <div class="bg-white/5 border border-white/10 rounded-xl px-4 py-3 backdrop-blur">
+          <p class="text-2xl font-bold" id="totalOwners">0</p><p class="text-xs text-gray-400">Owners</p>
+        </div>
+        <div class="bg-white/5 border border-white/10 rounded-xl px-4 py-3 backdrop-blur">
+          <p class="text-2xl font-bold">Sepolia</p><p class="text-xs text-gray-400">Network</p>
+        </div>
+      </div>
     </div>
 
     <div id="nftGrid" class="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -55,166 +79,222 @@
     </div>
   </section>
 
+  <!-- Asset Modal - Fixed with actions -->
   <div id="infoModal" class="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center hidden z-50 px-4">
-    <div class="bg-slate-900 border border-white/20 p-8 rounded-2xl max-w-sm w-full text-center relative card-glow">
-      <div class="w-16 h-16 bg-teal-500/20 text-teal-400 rounded-full flex items-center justify-center mx-auto mb-4">
-        <i data-lucide="info" class="w-8 h-8"></i>
+    <div class="bg-slate-900 border border-white/20 p-0 rounded-2xl max-w-md w-full overflow-hidden relative">
+      <img id="modalImage" src="" class="w-full h-64 object-cover">
+      <div class="p-6">
+        <div class="flex justify-between items-start mb-2">
+          <h3 id="modalTitle" class="text-2xl font-bold">Asset Details</h3>
+          <button id="modalLikeBtn" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-pink-500/20 hover:border-pink-500/30 hover:text-pink-400 transition"><i data-lucide="heart" class="w-5 h-5"></i></button>
+        </div>
+        <p id="modalCreator" class="text-sm text-gray-400 font-mono mb-4"></p>
+        <p class="text-gray-300 mb-6 text-sm">Minted on Sepolia • Owned by <span class="text-teal-400 font-semibold">Bright</span> • Built as full-stack Web3 portfolio project</p>
+        <div class="flex gap-3">
+          <button onclick="shareCurrentNFT()" class="flex-1 bg-white/5 border border-white/10 py-2.5 rounded-lg font-medium hover:bg-white/10 transition flex items-center justify-center gap-2"><i data-lucide="share-2" class="w-4 h-4"></i> Share</button>
+          <button id="closeModalBtn" class="flex-1 bg-white text-black py-2.5 rounded-lg font-medium btn-glow transition">Close</button>
+        </div>
       </div>
-      <h3 id="modalTitle" class="text-2xl font-bold mb-2">Asset Details</h3>
-      <p class="text-gray-300 mb-6 text-sm">This site is developed by <span class="text-teal-400 font-semibold">Bright</span>.</p>
-      <button id="closeModalBtn" class="bg-white text-black w-full py-2.5 rounded-lg font-medium btn-glow transition hover:bg-gray-200">Close</button>
     </div>
   </div>
 
-  <footer class="px-6 md:px-12 py-8 mt-12 border-t border-white/10 text-center text-sm text-gray-400">
-    <p>Built on Sepolia. PiQL © 2026</p>
+  <div id="toastContainer"></div>
+
+  <footer class="px-6 md:px-12 py-8 mt-12 border-t border-white/10">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
+      <div class="flex items-center gap-6">
+        <p>Built on Sepolia. PiQL © 2026</p>
+        <div class="hidden md:flex items-center gap-3">
+          <a href="https://dribbble.com/Moshiway" target="_blank" class="hover:text-teal-400 transition">Design: @moshiway</a>
+          <span class="text-white/20">|</span>
+          <a href="https://github.com/brightalobo-netizen/PiQL" target="_blank" class="hover:text-white transition">Code: Bright Alobo</a>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="https://dribbble.com/Moshiway" target="_blank" class="text-xs hover:text-teal-400">UI by Mohammad Moshtaghi</a>
+        <span class="text-white/10">•</span>
+        <p class="text-xs">Engineered by Bright Alobo — Full-stack Web3</p>
+      </div>
+    </div>
   </footer>
 
   <script>
     lucide.createIcons();
-    
-    // Mobile menu
+    function showToast(message, type='success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `<i data-lucide="${type==='success'?'check-circle':'info'}" class="w-4 h-4"></i> <span>${message}</span>`;
+      container.appendChild(toast);
+      lucide.createIcons();
+      setTimeout(() => { toast.style.opacity='0'; toast.style.transform='translateX(40px)'; setTimeout(()=>toast.remove(),300); }, 3000);
+    }
+
     document.getElementById('menuBtn').addEventListener('click', () => {
       document.getElementById('mobileMenu').classList.toggle('hidden');
     });
 
-    // Wallet connect
     const connectBtn = document.getElementById('connectWallet');
     let currentAccount = null;
-
     async function checkConnection() {
       if (window.ethereum) {
         try {
           const accounts = await window.ethereum.request({ method: 'eth_accounts' });
           if (accounts.length > 0) updateButton(accounts[0]);
-        } catch (err) { console.log('Not connected'); }
+        } catch {}
       }
     }
     checkConnection();
-
     connectBtn.addEventListener('click', async () => {
       if (currentAccount) {
         currentAccount = null;
         connectBtn.textContent = 'Connect Wallet';
-        connectBtn.classList.remove('bg-teal-500', 'text-white');
-        connectBtn.classList.add('bg-white', 'text-black');
+        connectBtn.classList.remove('bg-teal-500','text-white');
+        connectBtn.classList.add('bg-white','text-black');
+        showToast('Wallet disconnected','info');
       } else {
         if (window.ethereum) {
           try {
             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
             updateButton(accounts[0]);
-          } catch (error) { console.error('User rejected'); }
-        } else {
-          window.open('https://metamask.io/download/', '_blank');
-        }
+            showToast('Welcome back, Creator 👋','success');
+          } catch {}
+        } else { window.open('https://metamask.io/download/', '_blank'); }
       }
     });
-
     function updateButton(address) {
       currentAccount = address;
       connectBtn.textContent = `👋 Hi Creator`;
-      connectBtn.title = `${address.slice(0,6)}...${address.slice(-4)}`;
-      connectBtn.classList.remove('bg-white', 'text-black');
-      connectBtn.classList.add('bg-teal-500', 'text-white');
+      connectBtn.title = address;
+      connectBtn.classList.remove('bg-white','text-black');
+      connectBtn.classList.add('bg-teal-500','text-white');
     }
 
-    // Mock Data for realistic live-site preview
     const mockNFTs = [
-      {
-        id: 1,
-        title: "Neon Genesis Samurai",
-        creator: "0x71C...3a92",
-        image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop&q=80"
-      },
-      {
-        id: 2,
-        title: "Cybernetic Oasis #44",
-        creator: "0x3Db...e911",
-        image: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=500&auto=format&fit=crop&q=80"
-      },
-      {
-        id: 3,
-        title: "Abstract Meltdown",
-        creator: "0x921...88F1",
-        image: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=500&auto=format&fit=crop&q=80"
-      },
-      {
-        id: 4,
-        title: "Ethereal Dreamscape",
-        creator: "0x4A2...77cc",
-        image: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=500&auto=format&fit=crop&q=80"
-      },
-      {
-        id: 5,
-        title: "Hyperion Core",
-        creator: "0x882...11bA",
-        image: "https://images.unsplash.com/photo-1635322966219-b75ed372eb01?w=500&auto=format&fit=crop&q=80"
-      },
-      {
-        id: 6,
-        title: "Solitude Aura",
-        creator: "0x551...da39",
-        image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=500&auto=format&fit=crop&q=80"
-      },
-      {
-        id: 7,
-        title: "Chrono Phase Shift",
-        creator: "0x11a...FF32",
-        image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500&auto=format&fit=crop&q=80"
-      },
-      {
-        id: 8,
-        title: "Liquid Neon Paradigm",
-        creator: "0xBc4...9921",
-        image: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500&auto=format&fit=crop&q=80"
-      }
+      { id: 1, title: "Neon Genesis Samurai", creator: "0x71C...3a92", image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop&q=80" },
+      { id: 2, title: "Cybernetic Oasis #44", creator: "0x3Db...e911", image: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=500&auto=format&fit=crop&q=80" },
+      { id: 3, title: "Abstract Meltdown", creator: "0x921...88F1", image: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=500&auto=format&fit=crop&q=80" },
+      { id: 4, title: "Ethereal Dreamscape", creator: "0x4A2...77cc", image: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=500&auto=format&fit=crop&q=80" },
+      { id: 5, title: "Hyperion Core", creator: "0x882...11bA", image: "https://images.unsplash.com/photo-1635322966219-b75ed372eb01?w=500&auto=format&fit=crop&q=80" },
+      { id: 6, title: "Solitude Aura", creator: "0x551...da39", image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=500&auto=format&fit=crop&q=80" },
+      { id: 7, title: "Chrono Phase Shift", creator: "0x11a...FF32", image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500&auto=format&fit=crop&q=80" },
+      { id: 8, title: "Liquid Neon Paradigm", creator: "0xBc4...9921", image: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500&auto=format&fit=crop&q=80" }
     ];
 
-    // Modal handling elements
     const infoModal = document.getElementById('infoModal');
     const modalTitle = document.getElementById('modalTitle');
+    const modalImage = document.getElementById('modalImage');
+    const modalCreator = document.getElementById('modalCreator');
     const closeModalBtn = document.getElementById('closeModalBtn');
+    const modalLikeBtn = document.getElementById('modalLikeBtn');
+    let currentModalId = null;
+    let likedItems = new Set(JSON.parse(localStorage.getItem('piql_explore_likes') || '[]'));
 
-    function showAssetInfo(nftTitle) {
-      modalTitle.textContent = nftTitle;
+    function showAssetInfo(id) {
+      const nft = mockNFTs.find(n=>n.id===id);
+      if (!nft) return;
+      currentModalId = id;
+      modalTitle.textContent = nft.title;
+      modalImage.src = nft.image;
+      modalCreator.textContent = nft.creator;
+      updateModalLikeUI();
       infoModal.classList.remove('hidden');
+      lucide.createIcons();
     }
 
-    closeModalBtn.addEventListener('click', () => {
-      infoModal.classList.add('hidden');
+    function updateModalLikeUI() {
+      if (likedItems.has(currentModalId)) {
+        modalLikeBtn.classList.add('liked');
+        modalLikeBtn.innerHTML = `<i data-lucide="heart" class="w-5 h-5" fill="currentColor"></i>`;
+      } else {
+        modalLikeBtn.classList.remove('liked');
+        modalLikeBtn.innerHTML = `<i data-lucide="heart" class="w-5 h-5"></i>`;
+      }
+      lucide.createIcons();
+    }
+
+    modalLikeBtn.addEventListener('click', () => {
+      if (likedItems.has(currentModalId)) {
+        likedItems.delete(currentModalId);
+        showToast('Removed from favorites','info');
+      } else {
+        likedItems.add(currentModalId);
+        showToast('Added to favorites ❤️','success');
+      }
+      localStorage.setItem('piql_explore_likes', JSON.stringify([...likedItems]));
+      updateModalLikeUI();
+      loadNFTs();
     });
 
-    // Close modal when clicking outside the box
-    infoModal.addEventListener('click', (e) => {
-      if (e.target === infoModal) infoModal.classList.add('hidden');
-    });
+    function shareCurrentNFT() {
+      if (!currentModalId) return;
+      const nft = mockNFTs.find(n=>n.id===currentModalId);
+      const url = window.location.origin + window.location.pathname + '#nft-' + currentModalId;
+      const shareText = `Check out ${nft.title} on PiQL — Design by @moshiway, Built by Bright Alobo — Full-stack Web3`;
+      if (navigator.share) {
+        navigator.share({ title: nft.title, text: shareText, url: url }).then(()=>showToast('Shared successfully!','success')).catch(()=>{});
+      } else {
+        navigator.clipboard.writeText(url).then(()=>showToast('Link copied! ' + shareText,'success'));
+      }
+    }
+
+    closeModalBtn.addEventListener('click', () => infoModal.classList.add('hidden'));
+    infoModal.addEventListener('click', (e) => { if (e.target === infoModal) infoModal.classList.add('hidden'); });
 
     async function loadNFTs() {
       const grid = document.getElementById('nftGrid');
-      
       setTimeout(() => {
         grid.innerHTML = '';
-        
         mockNFTs.forEach(nft => {
-          const cardHtml = `
-            <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-5 card-glow flex flex-col justify-between">
+          const isLiked = likedItems.has(nft.id);
+          grid.innerHTML += `
+            <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-4 card-glow flex flex-col justify-between group">
               <div>
-                <div class="overflow-hidden rounded-xl mb-4 aspect-square bg-gray-900">
-                  <img src="${nft.image}" alt="${nft.title}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                <div class="relative overflow-hidden rounded-xl mb-4 aspect-square bg-gray-900">
+                  <img src="${nft.image}" alt="${nft.title}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.src='https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=500&q=80'">
+                  <div class="absolute top-3 right-3 flex gap-2">
+                    <button onclick="event.stopPropagation(); shareNFT(${nft.id})" class="w-8 h-8 rounded-full bg-black/60 backdrop-blur border border-white/10 flex items-center justify-center text-white hover:bg-teal-500/80 transition"><i data-lucide="share-2" class="w-4 h-4"></i></button>
+                    <button onclick="event.stopPropagation(); toggleLike(${nft.id})" class="like-btn w-8 h-8 rounded-full bg-black/60 backdrop-blur border border-white/10 flex items-center justify-center text-white hover:bg-pink-500/20 hover:text-pink-400 transition ${isLiked?'liked':''}"><i data-lucide="heart" class="w-4 h-4" ${isLiked?'fill="currentColor"':''}></i></button>
+                  </div>
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
-                <h4 class="font-bold text-lg mb-1 truncate">${nft.title}</h4>
-                <p class="text-sm text-gray-400 mb-4 font-mono">${nft.creator}</p>
+                <h4 class="font-bold text-[16px] mb-1 truncate">${nft.title}</h4>
+                <p class="text-xs text-gray-400 mb-4 font-mono">${nft.creator}</p>
               </div>
-              <button onclick="showAssetInfo('${nft.title.replace(/'/g, "\\'")}')" class="bg-teal-500 w-full py-2 rounded-lg font-medium btn-glow transition-colors hover:bg-teal-600">View Asset</button>
+              <button onclick="showAssetInfo(${nft.id})" class="bg-teal-500 w-full py-2.5 rounded-lg font-medium btn-glow transition hover:bg-teal-400 text-sm">View Asset</button>
             </div>
           `;
-          grid.innerHTML += cardHtml;
         });
-
         document.getElementById('totalNFTs').textContent = mockNFTs.length;
         document.getElementById('totalOwners').textContent = '6';
-      }, 1000);
+        lucide.createIcons();
+      }, 600);
     }
+
+    function toggleLike(id) {
+      if (likedItems.has(id)) {
+        likedItems.delete(id);
+        showToast('Removed from favorites','info');
+      } else {
+        likedItems.add(id);
+        showToast('Added to favorites ❤️','success');
+      }
+      localStorage.setItem('piql_explore_likes', JSON.stringify([...likedItems]));
+      loadNFTs();
+      if (currentModalId===id) updateModalLikeUI();
+    }
+
+    function shareNFT(id) {
+      const nft = mockNFTs.find(n=>n.id===id);
+      const url = window.location.origin + window.location.pathname + '#nft-' + id;
+      const shareText = `Check out ${nft.title} on PiQL — Design by @moshiway, Built by Bright Alobo — Full-stack Web3`;
+      if (navigator.share) {
+        navigator.share({ title: nft.title, text: shareText, url: url }).then(()=>showToast('Shared successfully!','success')).catch(()=>{});
+      } else {
+        navigator.clipboard.writeText(url).then(()=>showToast('Link copied! ' + nft.title,'success'));
+      }
+    }
+
     loadNFTs();
   </script>
 </body>

@@ -51,8 +51,8 @@
     /* Navbar */
     .navbar { background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; }
     .nav-content { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; gap: 32px; }
-    .logo { display: flex; align-items: center; gap: 12px; font-size: 24px; font-weight: 700; background: var(--gradient-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .logo-icon { width: 36px; height: 36px; background: var(--gradient-main); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; }
+    .logo { display: flex; align-items: center; gap: 12px; font-size: 24px; font-weight: 700; color: var(--text-primary); }
+    .logo-icon { display: none; }
     .nav-links { display: flex; align-items: center; gap: 8px; list-style: none; }
     .nav-links a { padding: 10px 20px; border-radius: 8px; color: var(--text-secondary); font-weight: 500; position: relative; }
     .nav-links a:hover { color: var(--text-primary); background: rgba(139, 92, 246, 0.1); }
@@ -113,15 +113,10 @@
     .stat:hover { color: var(--text-secondary); }
 
     /* Pagination */
-    .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 80px; flex-wrap: wrap; }
+    .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 80px; }
     .page-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; color: var(--text-secondary); font-weight: 600; }
     .page-btn:hover { border-color: var(--purple); color: var(--text-primary); background: rgba(139, 92, 246, 0.1); }
     .page-btn.active { background: var(--gradient-main); border-color: transparent; color: white; }
-    .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-    .designer-shoutout { background: linear-gradient(135deg, rgba(20,184,166,0.1) 0%, rgba(139,92,246,0.1) 100%); border: 1px solid rgba(139,92,246,0.2); border-radius: 16px; padding: 20px 24px; margin-bottom: 40px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-    .shoutout-text { flex: 1; min-width: 280px; }
-    .shoutout-text h4 { font-size: 16px; margin-bottom: 4px; color: var(--text-primary); }
-    .shoutout-text p { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
 
     /* Wallet Modal - FIXED */
     .wallet-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 9999; padding: 20px; }
@@ -178,14 +173,13 @@
   <nav class="navbar">
     <div class="container">
       <div class="nav-content">
-        <a href="index.html" class="logo">
-          <div class="logo-icon"><i data-lucide="hexagon"></i></div>PiQL
-        </a>
+        <a href="index.html" class="logo" style="background:none;-webkit-text-fill-color:var(--text-primary);">PiQL</a>
         <ul class="nav-links" id="navLinks">
           <li><a href="piql-explore.html">Explore</a></li>
           <li><a href="piql-community.html">Community</a></li>
           <li><a href="piql-marketplace.html" class="active">Marketplace</a></li>
           <li><a href="piql-blog.html">Blog</a></li>
+          <li><a href="piql-create.html">Create</a></li>
         </ul>
         <div class="nav-actions">
           <button class="connect-btn" id="connectBtn">Connect Wallet</button>
@@ -203,16 +197,6 @@
   </header>
 
   <main class="container">
-    <!-- Designer Shoutout - So you can send him the link -->
-    <div class="designer-shoutout">
-      <div style="width:48px;height:48px;background:var(--gradient-main);border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0;"><i data-lucide="heart" style="fill:white;"></i></div>
-      <div class="shoutout-text">
-        <h4>From Figma to Live — 2 Years in the Making ❤️</h4>
-        <p>Original UI concept by <a href="https://dribbble.com/Moshiway" target="_blank" style="color:var(--teal-light);font-weight:700;">Mohammad Moshtaghi @moshiway</a> — I saved this design 2 years ago. Now engineered end-to-end by me, <strong>Bright Alobo</strong>, as a full-stack Web3 dApp with wallet connect, persistent likes, and on-chain logic. <a href="https://dribbble.com/shots/23109589-NFT-Marketplace-Website" target="_blank" style="color:var(--purple);text-decoration:underline;">View original on Dribbble →</a></p>
-      </div>
-      <a href="https://dribbble.com/Moshiway" target="_blank" style="padding:10px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-weight:600;white-space:nowrap;">Send thanks to Moshiway</a>
-    </div>
-
     <div class="marketplace-tools">
       <div class="search-sort">
         <div class="search-box">
@@ -241,7 +225,12 @@
 
     <div class="nft-grid" id="nftGrid"></div>
 
-    <div class="pagination" id="pagination"></div>
+    <div class="pagination" id="pagination">
+      <button class="page-btn active">1</button>
+      <button class="page-btn">2</button>
+      <button class="page-btn">3</button>
+      <button class="page-btn">4</button>
+    </div>
   </main>
 
   <!-- Wallet Modal -->
@@ -277,9 +266,9 @@
           <a href="index.html" class="logo"><div class="logo-icon"><i data-lucide="hexagon"></i></div>PiQL</a>
           <p>The world's first and largest digital marketplace for crypto collectibles and non-fungible tokens.</p>
           <div class="footer-social">
-            <a href="https://x.com/moshiway" target="_blank" class="social-link" title="Moshiway on X"><i data-lucide="twitter"></i></a>
-            <a href="https://dribbble.com/Moshiway" target="_blank" class="social-link" title="Moshiway on Dribbble"><i data-lucide="layout-dashboard"></i></a>
-            <a href="https://github.com/brightalobo-netizen/PiQL" target="_blank" class="social-link" title="PiQL GitHub - Built by Bright"><i data-lucide="github"></i></a>
+            <a href="#" class="social-link" onclick="showToast('Twitter coming soon','info');return false;"><i data-lucide="twitter"></i></a>
+            <a href="https://dribbble.com/Moshiway" target="_blank" class="social-link"><i data-lucide="dribbble"></i></a>
+            <a href="https://github.com/brightalobo-netizen/PiQL" target="_blank" class="social-link"><i data-lucide="github"></i></a>
           </div>
         </div>
         <div class="footer-col"><h4>Marketplace</h4><ul class="footer-links"><li><a href="piql-marketplace.html">All NFTs</a></li><li><a href="#">Art</a></li><li><a href="#">Collectibles</a></li><li><a href="piql-explore.html">Explore</a></li></ul></div>
@@ -288,7 +277,7 @@
       </div>
       <div class="footer-bottom">
         <div>© 2026 PiQL NFT Marketplace. All rights reserved.</div>
-        <div class="footer-credit" style="text-align:right;line-height:1.6;">UI Concept by <a href="https://dribbble.com/Moshiway" target="_blank">Mohammad Moshtaghi @moshiway</a> <br> Held 2 years, Built now by <a href="https://github.com/brightalobo-netizen" target="_blank">Bright Alobo</a> — Full-stack Web3</div>
+        <div class="footer-credit">UI Design by <a href="https://dribbble.com/Moshiway" target="_blank">@moshiway</a> | Engineered by <a href="https://github.com/brightalobo-netizen" target="_blank">Bright Alobo</a></div>
       </div>
     </div>
   </footer>
@@ -391,24 +380,17 @@
       { id: 8, title: "Abstract Flow", creator: "ColorBurst", price: 2.10, likes: 678, category: "art", image: "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=600&q=80" },
       { id: 9, title: "Street Capture #42", creator: "LensMaster", price: 1.56, likes: 390, category: "photography", image: "https://images.unsplash.com/photo-1616763355603-9755a640a287?w=600&q=80" },
       { id: 10, title: "Bass Drop NFT", creator: "AudioFi", price: 0.78, likes: 512, category: "music", image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&q=80" },
-      { id: 11, title: "Crypto Knight - Fixed", creator: "GameForge", price: 3.89, likes: 845, category: "collectibles", image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&q=80" },
-      { id: 12, title: "Ethereal Portal", creator: "DimensionX", price: 6.24, likes: 1456, category: "3d", image: "https://images.unsplash.com/photo-1617396900799-f4ec2b43c7ae?w=600&q=80" },
-      { id: 13, title: "Golden Pharaoh", creator: "AncientArt", price: 4.55, likes: 923, category: "art", image: "https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=600&q=80" },
-      { id: 14, title: "Synthwave City", creator: "RetroWave", price: 2.33, likes: 1120, category: "3d", image: "https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=600&q=80" },
-      { id: 15, title: "Lens Flare #9", creator: "PhotoReal", price: 1.12, likes: 334, category: "photography", image: "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=600&q=80" },
-      { id: 16, title: "Vinyl Resurrection", creator: "SoundWave", price: 1.05, likes: 445, category: "music", image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&q=80" },
-      { id: 17, title: "Pixel Samurai", creator: "RetroBit", price: 2.75, likes: 667, category: "collectibles", image: "https://images.unsplash.com/photo-1618331835717-801e976710b2?w=600&q=80" },
-      { id: 18, title: "Nebula Mind", creator: "DeepSpace", price: 3.95, likes: 1502, category: "art", image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&q=80" }
+      { id: 11, title: "Crypto Knight", creator: "GameForge", price: 3.89, likes: 845, category: "collectibles", image: "https://images.unsplash.com/photo-1602205766832-cde6db595acc?w=600&q=80" },
+      { id: 12, title: "Ethereal Portal", creator: "DimensionX", price: 6.24, likes: 1456, category: "3d", image: "https://images.unsplash.com/photo-1617396900799-f4ec2b43c7ae?w=600&q=80" }
     ];
 
     let currentCategory = 'all';
     let currentSort = 'recent';
     let currentSearch = '';
     let likedItems = new Set();
-    let currentPage = 1;
-    const itemsPerPage = 6;
 
-    function getFilteredData() {
+    function renderNFTs() {
+      const grid = document.getElementById('nftGrid');
       let filtered = nftData.filter(nft => {
         const matchCategory = currentCategory === 'all' || nft.category === currentCategory;
         const matchSearch = nft.title.toLowerCase().includes(currentSearch.toLowerCase()) || nft.creator.toLowerCase().includes(currentSearch.toLowerCase());
@@ -422,43 +404,10 @@
           default: return b.id - a.id;
         }
       });
-      return filtered;
-    }
-
-    function renderPagination(totalItems) {
-      const totalPages = Math.ceil(totalItems / itemsPerPage);
-      const pagEl = document.getElementById('pagination');
-      if (totalPages <= 1) { pagEl.innerHTML = ''; return; }
-      let html = '';
-      for (let i=1;i<=totalPages;i++) {
-        html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="goToPage(${i})">${i}</button>`;
-      }
-      pagEl.innerHTML = html;
-    }
-
-    function goToPage(page) {
-      currentPage = page;
-      renderNFTs();
-      window.scrollTo({ top: 400, behavior: 'smooth' });
-    }
-
-    function renderNFTs() {
-      const grid = document.getElementById('nftGrid');
-      const filtered = getFilteredData();
-      const totalItems = filtered.length;
-      const start = (currentPage-1)*itemsPerPage;
-      const paginated = filtered.slice(start, start+itemsPerPage);
-
-      if (paginated.length===0) {
-        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text-secondary);"><p style="font-size:20px;margin-bottom:8px;">No NFTs found</p><p>Try different search or category</p></div>`;
-        renderPagination(0);
-        return;
-      }
-
-      grid.innerHTML = paginated.map(nft => `
+      grid.innerHTML = filtered.map(nft => `
         <div class="nft-card" data-category="${nft.category}">
           <div class="card-media">
-            <img src="${nft.image}" alt="${nft.title}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=600&q=80'">
+            <img src="${nft.image}" alt="${nft.title}" loading="lazy">
             <div class="card-actions-top">
               <button class="card-share" onclick="shareNFT(${nft.id}, event)" title="Share"><i data-lucide="share-2" style="width:18px;height:18px;"></i></button>
               <button class="card-like ${likedItems.has(nft.id)?'liked':''}" onclick="toggleLike(${nft.id}, event)" title="Like"><i data-lucide="heart" style="width:18px;height:18px;" ${likedItems.has(nft.id)?'fill="currentColor"':''}></i></button>
@@ -479,7 +428,6 @@
           </div>
         </div>
       `).join('');
-      renderPagination(totalItems);
       lucide.createIcons();
     }
 
@@ -518,12 +466,11 @@
         document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
         e.target.classList.add('active');
         currentCategory = e.target.dataset.category;
-        currentPage = 1;
         renderNFTs();
       }
     });
-    document.getElementById('sortSelect').addEventListener('change', (e) => { currentSort = e.target.value; currentPage=1; renderNFTs(); });
-    document.getElementById('searchInput').addEventListener('input', (e) => { currentSearch = e.target.value; currentPage=1; renderNFTs(); });
+    document.getElementById('sortSelect').addEventListener('change', (e) => { currentSort = e.target.value; renderNFTs(); });
+    document.getElementById('searchInput').addEventListener('input', (e) => { currentSearch = e.target.value; renderNFTs(); });
 
     renderNFTs();
   </script>
