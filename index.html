@@ -1,377 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PiQL - NFT & Artwork Marketplace</title>
-  <meta property="og:title" content="PiQL - NFT & Artwork Marketplace" />
-<meta property="og:description" content="Full-stack NFT marketplace built on mobile — Solidity + React + REST API" />
-<meta property="og:image" content="https://brightalobo-netizen.github.io/PiQL/piql-thumbnail.png" />
-<meta property="og:url" content="https://brightalobo-netizen.github.io/PiQL/" />
-  <meta name="twitter:card" content="summary_large_image" />
-<meta property="og:type" content="website" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.js"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
-    body { font-family: 'Space Grotesk', sans-serif; }
-  .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 25%, #0d9488 100%); }
-  .card-glow:hover { box-shadow: 0 0 30px rgba(20, 184, 166, 0.3); transform: translateY(-4px); transition: all 0.3s ease; }
-  .btn-glow:hover { box-shadow: 0 0 20px rgba(20, 184, 166, 0.5); }
-  </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PiQL - NFT & Artwork Marketplace</title>
+<meta property="og:title" content="PiQL - NFT & Artwork Marketplace"/>
+<meta property="og:description" content="Full-stack NFT marketplace built on mobile — Design by @moshiway, Built by Bright Alobo. Solidity + React + REST API"/>
+<meta property="og:image" content="https://brightalobo-netizen.github.io/PiQL/piql-thumbnail.png"/>
+<meta property="og:url" content="https://brightalobo-netizen.github.io/PiQL/"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta property="og:type" content="website"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+body{font-family:'Space Grotesk',sans-serif}
+.gradient-bg{background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 25%,#0d9488 100%);background-attachment:fixed}
+.card-glow{transition:all .4s}.card-glow:hover{box-shadow:0 0 30px rgba(20,184,166,.4),0 10px 40px rgba(0,0,0,.4);transform:translateY(-8px)}
+.btn-glow:hover{box-shadow:0 0 20px rgba(20,184,166,.6);transform:translateY(-1px)}
+#toastContainer{position:fixed;bottom:24px;right:24px;z-index:10000;display:flex;flex-direction:column;gap:12px;pointer-events:none}
+.toast{background:rgba(15,23,42,.95);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);color:#fff;padding:14px 20px;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);font-weight:500;font-size:14px;display:flex;align-items:center;gap:10px;min-width:280px;animation:toastIn .3s;pointer-events:auto}
+.toast.success{border-color:#14b8a6;background:rgba(20,184,166,.15)}.toast.info{border-color:#8b5cf6;background:rgba(139,92,246,.15)}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+</style>
 </head>
 <body class="gradient-bg text-white min-h-screen">
-  <!-- Navbar -->
-  <nav class="px-6 py-4 md:px-12 flex justify-between items-center border-b border-white/10">
-    <div class="flex items-center gap-8">
-      <h1 class="text-2xl font-bold">PiQL</h1>
-      <div class="hidden md:flex gap-6 text-sm text-gray-300">
-        <a href="piql-explore.html" class="hover:text-white">Explore</a>
-        <a href="piql-community.html" class="hover:text-white">Community <span class="text-xs bg-teal-500 px-2 py-0.5 rounded">beta</span></a> 
-        <a href="piql-marketplace.html" class="hover:text-white">Marketplace</a>
-        <a href="piql-blog.html" class="hover:text-white">Blog</a>
-      </div>
-    </div>
-    <button id="connectWallet" class="bg-white text-black px-5 py-2 rounded-lg font-medium btn-glow transition">Connect Wallet</button>
-    <button id="menuBtn" class="md:hidden"><i data-lucide="menu"></i></button>
-  </nav>
+<nav class="px-6 py-4 md:px-12 flex justify-between items-center border-b border-white/10 sticky top-0 z-40 bg-[#0f172a]/80 backdrop-blur-lg">
+<div class="flex items-center gap-8"><a href="index.html" class="text-2xl font-bold">PiQL</a><div class="hidden md:flex gap-6 text-sm text-gray-300"><a href="piql-explore.html" class="hover:text-white">Explore</a><a href="piql-community.html" class="hover:text-white">Community <span class="text-xs bg-teal-500 px-2 py-0.5 rounded">beta</span></a><a href="piql-marketplace.html" class="hover:text-white">Marketplace</a><a href="piql-blog.html" class="hover:text-white">Blog</a><a href="piql-create.html" class="hover:text-white">Create</a></div></div>
+<div class="flex items-center gap-3"><button id="connectWallet" class="bg-white text-black px-6 py-2.5 rounded-lg font-medium btn-glow transition text-[15px] leading-none">Connect Wallet</button><button id="menuBtn" class="md:hidden p-2"><i data-lucide="menu"></i></button></div>
+</nav>
+<div id="mobileMenu" class="hidden md:hidden bg-black/90 backdrop-blur-lg p-6 space-y-4 border-b border-white/10 sticky top-[65px] z-30"><a href="piql-explore.html" class="block text-gray-300">Explore</a><a href="piql-community.html" class="block text-gray-300">Community</a><a href="piql-marketplace.html" class="block text-gray-300">Marketplace</a><a href="piql-blog.html" class="block text-gray-300">Blog</a><a href="piql-create.html" class="block text-gray-300">Create</a></div>
 
-  <!-- Mobile Menu -->
-  <div id="mobileMenu" class="hidden md:hidden bg-black/80 backdrop-blur-lg p-6 space-y-4">
-    <a href="piql-explore.html" class="block">Explore</a>
-    <a href="piql-community.html" class="block">Community</a>
-    <a href="piql-marketplace.html" class="block">Marketplace</a>
-    <a href="piql-blog.html" class="block">Blog</a>
-  </div>
+<section class="px-6 md:px-12 py-16 md:py-24 grid md:grid-cols-2 gap-12 items-center">
+<div><h2 class="text-5xl md:text-7xl font-bold leading-tight mb-6">NFT AND<br>ARTWORK</h2><p class="text-gray-300 mb-8 max-w-md">PiQL combines art and technology to offer unique digital assets. Trade NFTs easily with blockchain-backed authenticity. Design by @moshiway, Built by Bright Alobo — Full-stack Web3 on Sepolia.</p><div class="flex gap-4 mb-12"><a href="piql-community.html" class="inline-block bg-teal-500 px-6 py-3 rounded-lg font-medium btn-glow">Join PiQL</a><a href="piql-explore.html" class="inline-block border border-white/30 px-6 py-3 rounded-lg font-medium hover:bg-white/10">Explore NFTs</a></div><div class="flex gap-8"><div><p class="text-3xl font-bold">58K+</p><p class="text-sm text-gray-400">Art work</p></div><div><p class="text-3xl font-bold">43K+</p><p class="text-sm text-gray-400">Artist</p></div><div><p class="text-3xl font-bold">31K+</p><p class="text-sm text-gray-400">Auction</p></div></div></div>
+<div class="relative"><img src="https://images.unsplash.com/photo-1635322966219-b75ed372eb01?w=600&h=600&fit=crop" alt="NFT Skull" class="rounded-2xl w-full" onerror="this.src='https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=600&q=80'"></div>
+</section>
 
-  <!-- Hero -->
-  <section class="px-6 md:px-12 py-16 md:py-24 grid md:grid-cols-2 gap-12 items-center">
-    <div>
-      <h2 class="text-5xl md:text-7xl font-bold leading-tight mb-6">NFT AND<br>ARTWORK</h2>
-      <p class="text-gray-300 mb-8 max-w-md">PiQL combines art and technology to offer unique digital assets. Trade NFTs easily with blockchain-backed authenticity.</p>
-      <div class="flex gap-4 mb-12">
-        <a href="piql-community.html" class="inline-block bg-teal-500 px-6 py-3 rounded-lg font-medium btn-glow transition">
-          Join PiQL
-        </a>
-        <a href="piql-explore.html" class="inline-block border border-white/30 px-6 py-3 rounded-lg font-medium hover:bg-white/10 transition">
-          Explore NFTs
-        </a>
-      </div>
-      <div class="flex gap-8">
-        <div><p class="text-3xl font-bold">58K+</p><p class="text-sm text-gray-400">Art work</p></div>
-        <div><p class="text-3xl font-bold">43K+</p><p class="text-sm text-gray-400">Artist</p></div>
-        <div><p class="text-3xl font-bold">31K+</p><p class="text-sm text-gray-400">Auction</p></div>
-      </div>
-    </div>
-    <div class="relative">
-      <img src="https://images.unsplash.com/photo-1635322966219-b75ed372eb01?w=600&h=600&fit=crop" alt="NFT Skull" class="rounded-2xl w-full">
-    </div>
-  </section>
+<section class="px-6 md:px-12 py-12">
+<div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6 md:p-8 grid md:grid-cols-2 gap-8 card-glow"><img src="https://images.unsplash.com/photo-1617791160536-598cf32026fb?w=500&h=500&fit=crop" alt="Rainbow Skull" class="rounded-xl w-full" onerror="this.src='https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=600&q=80'"><div><h4 class="text-2xl font-bold mb-2">Rainbow Residue skull Artwork</h4><p class="text-sm text-gray-400 mb-6">Created by @golden_jambe</p><div class="grid grid-cols-2 gap-6 mb-6"><div><p class="text-sm text-gray-400">Current Bid</p><p class="text-2xl font-bold">0.57 ETH</p><p class="text-sm text-gray-400">$1,843.66</p></div><div><p class="text-sm text-gray-400">Auction Ends In</p><div id="timer" class="flex gap-3 text-xl font-bold"><div><span id="hours">16</span><p class="text-xs text-gray-400 font-normal">Hours</p></div><div><span id="minutes">54</span><p class="text-xs text-gray-400 font-normal">Minutes</p></div><div><span id="seconds">31</span><p class="text-xs text-gray-400 font-normal">Seconds</p></div></div></div></div><button onclick="showToast('Viewing Rainbow Residue — Sepolia testnet','success')" class="bg-teal-500 w-full py-3 rounded-lg font-medium btn-glow">View Artwork</button></div></div>
+</section>
 
-  <!-- Trending NFT -->
-  <section class="px-6 md:px-12 py-12">
-    <h3 class="text-2xl font-bold mb-8">Trending NFT and Artworks</h3>
-    <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6 md:p-8 grid md:grid-cols-2 gap-8 card-glow">
-      <img src="https://images.unsplash.com/photo-1617791160536-598cf32026fb?w=500&h=500&fit=crop" alt="Rainbow Skull" class="rounded-xl w-full">
-      <div>
-        <h4 class="text-2xl font-bold mb-2">Rainbow Residue skull Artwork</h4>
-        <p class="text-sm text-gray-400 mb-6">Created by @golden_jambe</p>
-        <div class="grid grid-cols-2 gap-6 mb-6">
-          <div>
-            <p class="text-sm text-gray-400">Current Bid</p>
-            <p class="text-2xl font-bold">0.57 ETH</p>
-            <p class="text-sm text-gray-400">$1,843.66</p>
-          </div>
-          <div>
-            <p class="text-sm text-gray-400">Auction Ends In</p>
-            <div id="timer" class="flex gap-3 text-xl font-bold">
-              <div><span id="hours">16</span><p class="text-xs text-gray-400 font-normal">Hours</p></div>
-              <div><span id="minutes">54</span><p class="text-xs text-gray-400 font-normal">Minutes</p></div>
-              <div><span id="seconds">31</span><p class="text-xs text-gray-400 font-normal">Seconds</p></div>
-            </div>
-          </div>
-        </div>
-        <button class="bg-teal-500 w-full py-3 rounded-lg font-medium btn-glow">View Artwork</button>
-      </div>
-    </div>
-  </section>
+<section class="px-6 md:px-12 py-12"><div class="flex justify-between items-center mb-8"><h3 class="text-2xl font-bold">Top collection</h3><a href="piql-marketplace.html" class="text-teal-400 text-sm">View more →</a></div><div class="grid md:grid-cols-3 gap-6"><div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-5 card-glow"><img src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=400&h=400&fit=crop" class="rounded-xl mb-4 w-full" onerror="this.src='https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=600&q=80'"><h4 class="font-bold text-lg mb-3">Rainbow</h4><div class="space-y-2 text-sm"><div class="flex justify-between"><span class="text-gray-400">Highest sale</span><span>$345.7K</span></div><div class="flex justify-between"><span class="text-gray-400">Market cap</span><span>$91.5M</span></div><div class="flex justify-between"><span class="text-gray-400">Total volume</span><span>$151.7M</span></div></div></div><div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-5 card-glow"><img src="https://images.unsplash.com/photo-1634973357973-f2ed2657db3c?w=400&h=400&fit=crop" class="rounded-xl mb-4 w-full" onerror="this.src='https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=600&q=80'"><h4 class="font-bold text-lg mb-3">Hues of Death</h4><div class="space-y-2 text-sm"><div class="flex justify-between"><span class="text-gray-400">Highest sale</span><span>$516.7K</span></div><div class="flex justify-between"><span class="text-gray-400">Market cap</span><span>$81.3M</span></div><div class="flex justify-between"><span class="text-gray-400">Total volume</span><span>$131.7M</span></div></div></div><div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-5 card-glow"><img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&h=400&fit=crop" class="rounded-xl mb-4 w-full" onerror="this.src='https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=600&q=80'"><h4 class="font-bold text-lg mb-3">Neon Noggin</h4><div class="space-y-2 text-sm"><div class="flex justify-between"><span class="text-gray-400">Highest sale</span><span>$765.7K</span></div><div class="flex justify-between"><span class="text-gray-400">Market cap</span><span>$95.3M</span></div><div class="flex justify-between"><span class="text-gray-400">Total volume</span><span>$161.7M</span></div></div></div></div></section>
 
-  <!-- Top Collection -->
-  <section class="px-6 md:px-12 py-12">
-    <div class="flex justify-between items-center mb-8">
-      <h3 class="text-2xl font-bold">Top collection</h3>
-      <a href="#" class="text-teal-400 text-sm">View more →</a>
-    </div>
-    <div class="grid md:grid-cols-3 gap-6">
-      <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-5 card-glow">
-        <img src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=400&h=400&fit=crop" class="rounded-xl mb-4 w-full">
-        <h4 class="font-bold text-lg mb-3">Rainbow</h4>
-        <div class="space-y-2 text-sm">
-          <div class="flex justify-between"><span class="text-gray-400">Highest sale</span><span>$345.7K</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">Market cap</span><span>$91.5M</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">Total volume</span><span>$151.7M</span></div>
-        </div>
-      </div>
-      <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-5 card-glow">
-        <img src="https://images.unsplash.com/photo-1634973357973-f2ed2657db3c?w=400&h=400&fit=crop" class="rounded-xl mb-4 w-full">
-        <h4 class="font-bold text-lg mb-3">Hues of Death</h4>
-        <div class="space-y-2 text-sm">
-          <div class="flex justify-between"><span class="text-gray-400">Highest sale</span><span>$516.7K</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">Market cap</span><span>$81.3M</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">Total volume</span><span>$131.7M</span></div>
-        </div>
-      </div>
-      <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-5 card-glow">
-        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&h=400&fit=crop" class="rounded-xl mb-4 w-full">
-        <h4 class="font-bold text-lg mb-3">Neon Noggin</h4>
-        <div class="space-y-2 text-sm">
-          <div class="flex justify-between"><span class="text-gray-400">Highest sale</span><span>$765.7K</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">Market cap</span><span>$95.3M</span></div>
-          <div class="flex justify-between"><span class="text-gray-400">Total volume</span><span>$161.7M</span></div>
-        </div>
-      </div>
-    </div>
-  </section>
+<section class="px-6 md:px-12 py-12"><div class="flex justify-between items-center mb-8"><h3 class="text-2xl font-bold">Top artists</h3><a href="piql-community.html" class="text-teal-400 text-sm">View more →</a></div><div class="grid md:grid-cols-2 gap-4"><div class="bg-white/5 border border-white/10 rounded-xl p-4 flex items-center gap-4 card-glow"><img src="https://i.pravatar.cc/60?img=12" class="rounded-full w-12 h-12"><div class="flex-1"><p class="font-bold">Nathan Kim</p><p class="text-sm text-gray-400">3D designer and NFT creator</p></div><div class="text-right"><p class="font-bold">45</p><p class="text-xs text-gray-400">Works</p></div></div><div class="bg-white/5 border border-white/10 rounded-xl p-4 flex items-center gap-4 card-glow"><img src="https://i.pravatar.cc/60?img=5" class="rounded-full w-12 h-12"><div class="flex-1"><p class="font-bold">Sofia Rodriguez</p><p class="text-sm text-gray-400">Graphic designer</p></div><div class="text-right"><p class="font-bold">40</p><p class="text-xs text-gray-400">Works</p></div></div></div></section>
 
-  <!-- Top Artists -->
-  <section class="px-6 md:px-12 py-12">
-    <div class="flex justify-between items-center mb-8">
-      <h3 class="text-2xl font-bold">Top artists</h3>
-      <a href="#" class="text-teal-400 text-sm">View more →</a>
-    </div>
-    <div class="grid md:grid-cols-2 gap-4">
-      <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-4 flex items-center gap-4 card-glow">
-        <img src="https://i.pravatar.cc/60?img=12" class="rounded-full w-12 h-12">
-        <div class="flex-1">
-          <p class="font-bold">Nathan Kim</p>
-          <p class="text-sm text-gray-400">3D designer and NFT creator</p>
-        </div>
-        <div class="text-right"><p class="font-bold">45</p><p class="text-xs text-gray-400">Works</p></div>
-      </div>
-      <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-4 flex items-center gap-4 card-glow">
-        <img src="https://i.pravatar.cc/60?img=5" class="rounded-full w-12 h-12">
-        <div class="flex-1">
-          <p class="font-bold">Sofia Rodriguez</p>
-          <p class="text-sm text-gray-400">Graphic designer</p>
-        </div>
-        <div class="text-right"><p class="font-bold">40</p><p class="text-xs text-gray-400">Works</p></div>
-      </div>
-      <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-4 flex items-center gap-4 card-glow">
-        <img src="https://i.pravatar.cc/60?img=32" class="rounded-full w-12 h-12">
-        <div class="flex-1">
-          <p class="font-bold">Ava Patel</p>
-          <p class="text-sm text-gray-400">Web3 and graphic designer</p>
-        </div>
-        <div class="text-right"><p class="font-bold">29</p><p class="text-xs text-gray-400">Works</p></div>
-      </div>
-      <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-4 flex items-center gap-4 card-glow">
-        <img src="https://i.pravatar.cc/60?img=14" class="rounded-full w-12 h-12">
-        <div class="flex-1">
-          <p class="font-bold">Lucas Chang</p>
-          <p class="text-sm text-gray-400">NFT creator</p>
-        </div>
-        <div class="text-right"><p class="font-bold">34</p><p class="text-xs text-gray-400">Works</p></div>
-      </div>
-    </div>
-  </section>
+<div id="walletModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"><div class="bg-[#1a1f2e] border border-white/10 rounded-2xl p-6 w-full max-w-md"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold">Connect Wallet</h3><button id="closeModal"><i data-lucide="x"></i></button></div><div class="space-y-3"><button id="metamaskBtn" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 p-4 rounded-xl flex items-center gap-3"><img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" class="w-8 h-8"><span>MetaMask</span></button><button id="walletConnectBtn" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl flex items-center gap-3"><span>WalletConnect</span></button><button id="coinbaseBtn" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl flex items-center gap-3"><span>Coinbase Wallet</span></button></div></div></div>
+<div id="toastContainer"></div>
 
-  <!-- Wallet Modal -->
-  <div id="walletModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-[#1a1f2e] border border-white/10 rounded-2xl p-6 w-full max-w-md">
-      <div class="flex justify-between items-center mb-6">
-        <h3 class="text-xl font-bold">Connect Wallet</h3>
-        <button id="closeModal"><i data-lucide="x"></i></button>
-      </div>
-      <div class="space-y-3">
-        <button id="metamaskBtn" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 p-4 rounded-xl flex items-center gap-3 transition">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" class="w-8 h-8">
-          <span class="font-medium">MetaMask</span>
-        </button>
-        <button id="walletConnectBtn" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 p-4 rounded-xl flex items-center gap-3 transition">
-          <img src="https://walletconnect.com/_next/static/media/logo_mark.84dd7dff.svg" class="w-8 h-8">
-          <span class="font-medium">WalletConnect</span>
-        </button>
-        <button id="coinbaseBtn" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 p-4 rounded-xl flex items-center gap-3 transition">
-          <img src="https://play-lh.googleusercontent.com/k5oR3oT3Wsh_M_s4c_WaT5S2zW5Gk33r3d9f_4z8s2vJxB2gX4zP8g7m1c3xK9r_7o=w240-h480-rw" class="w-8 h-8 rounded">
-          <span class="font-medium">Coinbase Wallet</span>
-        </button>
-      </div>
-    </div>
-  </div>
+<footer class="px-6 md:px-12 py-8 mt-12 border-t border-white/10"><div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400"><div class="flex items-center gap-6"><p>Built on Sepolia. PiQL © 2026</p><div class="hidden md:flex items-center gap-3"><a href="https://dribbble.com/Moshiway" target="_blank" class="hover:text-teal-400">Design: @moshiway</a><span class="text-white/20">|</span><a href="https://github.com/brightalobo-netizen/PiQL" target="_blank" class="hover:text-white">Code: Bright Alobo</a></div></div><div class="flex items-center gap-4"><a href="https://dribbble.com/Moshiway" target="_blank" class="text-xs hover:text-teal-400">UI by Mohammad Moshtaghi</a><span class="text-white/10">•</span><p class="text-xs">Engineered by Bright Alobo — Full-stack Web3</p></div></div></footer>
 
-  <!-- Footer -->
-  <footer class="px-6 md:px-12 py-8 mt-12 border-t border-white/10 text-center text-sm text-gray-400">
-    <p class="mb-2">Design by @moshiway on Figma. Built with Tailwind CSS.</p>
-    <a href="https://github.com/brightalobo-netizen/PiQL" class="text-teal-400 hover:underline">View Source on GitHub →</a>
-  </footer>
-
-  <script>
-    lucide.createIcons();
-    
-    // ===== PiQL API Client - REST Implementation per ARCHITECTURE.md =====
-    const PiQL_API = {
-      baseURL: 'https://brightalobo-netizen.github.io/PiQL/api',
-      
-      async getUser(wallet) {
-        const shortWallet = wallet.slice(2,6).toLowerCase();
-        try {
-          const res = await fetch(`${this.baseURL}/users/${shortWallet}.json`);
-          if (!res.ok) throw new Error('User not found');
-          return await res.json();
-        } catch {
-          // Fallback to LocalStorage cache if API fails
-          const users = JSON.parse(localStorage.getItem('piql_users') || '{}');
-          return users[wallet.toLowerCase()] || null;
-        }
-      },
-      
-      async createUser(wallet) {
-        const shortWallet = wallet.slice(2,6);
-        const user = {
-          wallet_address: wallet.toLowerCase(),
-          username: `User_${shortWallet}`,
-          bio: null,
-          avatar_uri: `https://i.pravatar.cc/150?u=${shortWallet}`,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          stats: { artworks_created: 0, nfts_owned: 0 }
-        };
-        const users = JSON.parse(localStorage.getItem('piql_users') || '{}');
-        users[wallet.toLowerCase()] = user;
-        localStorage.setItem('piql_users', JSON.stringify(users));
-        return user;
-      }
-    };
-
-    // ===== Mobile menu =====
-    document.getElementById('menuBtn').addEventListener('click', () => {
-      document.getElementById('mobileMenu').classList.toggle('hidden');
-    });
-
-    // ===== Wallet Connection Logic =====
-    const modal = document.getElementById('walletModal');
-    const connectBtn = document.getElementById('connectWallet');
-    const metamaskBtn = document.getElementById('metamaskBtn');
-    const walletConnectBtn = document.getElementById('walletConnectBtn');
-    const coinbaseBtn = document.getElementById('coinbaseBtn');
-    let currentAccount = null;
-
-    // Check if already connected on page load
-    async function checkConnection() {
-      if (typeof window.ethereum!== 'undefined') {
-        try {
-          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-          if (accounts.length > 0) {
-            await updateButton(accounts[0]);
-          }
-        } catch (err) {
-          // Silent fail
-        }
-      }
-    }
-    window.addEventListener('load', checkConnection);
-
-    // Open modal or copy address on click
-    connectBtn.addEventListener('click', () => {
-      if (!window.ethereum) {
-        showToast('Please open in MetaMask browser');
-        return;
-      }
-      
-      if (currentAccount) {
-        navigator.clipboard.writeText(currentAccount);
-        showToast('Address copied: ' + currentAccount.slice(0,6) + '...' + currentAccount.slice(-4));
-      } else {
-        modal.classList.remove('hidden');
-        metamaskBtn.innerHTML = `
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" class="w-8 h-8">
-          <span class="font-medium">MetaMask</span>
-        `;
-      }
-    });
-
-    // Close modal
-    document.getElementById('closeModal').addEventListener('click', () => modal.classList.add('hidden'));
-    modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.add('hidden'); });
-
-    // MetaMask connect
-    metamaskBtn.addEventListener('click', async () => {
-      if (window.ethereum) {
-        try {
-          connectBtn.textContent = 'Connecting...';
-          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-          await updateButton(accounts[0]);
-          modal.classList.add('hidden');
-        } catch (error) {
-          connectBtn.textContent = 'Connect Wallet';
-          showToast('Connection cancelled');
-        }
-      } else {
-        window.open('https://metamask.io/download/', '_blank');
-      }
-    });
-
-    walletConnectBtn.addEventListener('click', () => showToast('WalletConnect coming soon'));
-    coinbaseBtn.addEventListener('click', () => showToast('Coinbase Wallet coming soon'));
-
-    // Update UI after connection - NOW USES REST API
-    async function updateButton(address) {
-      currentAccount = address;
-      connectBtn.title = address;
-      
-      let user = await PiQL_API.getUser(address);
-      if (!user) {
-        user = await PiQL_API.createUser(address);
-        showToast(`Welcome to PiQL, ${user.username} 👋`);
-      } else {
-        showToast(`Welcome back, ${user.username} 👋`);
-      }
-      
-      connectBtn.textContent = `👋 ${user.username}`;
-      connectBtn.classList.remove('bg-white', 'text-black');
-      connectBtn.classList.add('bg-teal-500', 'text-white');
-    }
-
-    // Toast notification
-    function showToast(message) {
-      const toast = document.createElement('div');
-      toast.className = 'fixed bottom-6 right-6 bg-teal-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
-      toast.textContent = message;
-      document.body.appendChild(toast);
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transition = 'opacity 0.3s';
-        setTimeout(() => toast.remove(), 300);
-      }, 3000);
-    }
-
-    // Listen for account changes
-    if (window.ethereum) {
-      window.ethereum.on('accountsChanged', (accounts) => {
-        if (accounts.length > 0) {
-          updateButton(accounts[0]);
-        } else {
-          currentAccount = null;
-          connectBtn.textContent = 'Connect Wallet';
-          connectBtn.title = '';
-          connectBtn.classList.remove('bg-teal-500', 'text-white');
-          connectBtn.classList.add('bg-white', 'text-black');
-        }
-      });
-    }
-
-    // Countdown timer
-    let time = 16 * 3600 + 54 * 60 + 31;
-    setInterval(() => {
-      time--;
-      if (time < 0) time = 16 * 3600 + 54 * 60 + 31;
-      const h = Math.floor(time / 3600);
-      const m = Math.floor((time % 3600) / 60);
-      const s = time % 60;
-      document.getElementById('hours').textContent = h;
-      document.getElementById('minutes').textContent = m;
-      document.getElementById('seconds').textContent = s;
-    }, 1000);
-  </script>
+<script>
+lucide.createIcons();
+function showToast(msg,type='success'){const c=document.getElementById('toastContainer');const t=document.createElement('div');t.className=`toast ${type}`;t.innerHTML=`<i data-lucide="${type==='success'?'check-circle':'info'}" class="w-4 h-4"></i><span>${msg}</span>`;c.appendChild(t);lucide.createIcons();setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),300)},3000);}
+document.getElementById('menuBtn').addEventListener('click',()=>document.getElementById('mobileMenu').classList.toggle('hidden'));
+const modal=document.getElementById('walletModal');const connectBtn=document.getElementById('connectWallet');const metamaskBtn=document.getElementById('metamaskBtn');let currentAccount=null;
+async function checkConnection(){if(window.ethereum){try{const a=await window.ethereum.request({method:'eth_accounts'});if(a.length>0)updateButton(a[0]);}catch{}}}
+window.addEventListener('load',checkConnection);
+connectBtn.addEventListener('click',()=>{if(currentAccount){navigator.clipboard.writeText(currentAccount);showToast('Address copied: '+currentAccount.slice(0,6)+'...'+currentAccount.slice(-4));}else{modal.classList.remove('hidden');}});
+document.getElementById('closeModal').addEventListener('click',()=>modal.classList.add('hidden'));modal.addEventListener('click',(e)=>{if(e.target===modal)modal.classList.add('hidden');});
+metamaskBtn.addEventListener('click',async()=>{if(window.ethereum){try{connectBtn.textContent='Connecting...';const a=await window.ethereum.request({method:'eth_requestAccounts'});updateButton(a[0]);modal.classList.add('hidden');}catch{connectBtn.textContent='Connect Wallet';showToast('Connection cancelled','info');}}else{window.open('https://metamask.io/download/','_blank');}});
+document.getElementById('walletConnectBtn').addEventListener('click',()=>{modal.classList.add('hidden');showToast('WalletConnect coming soon','info');});
+document.getElementById('coinbaseBtn').addEventListener('click',()=>{modal.classList.add('hidden');showToast('Coinbase Wallet coming soon','info');});
+function updateButton(address){currentAccount=address;connectBtn.title=address;connectBtn.textContent='👋 Hi Creator';connectBtn.classList.remove('bg-white','text-black');connectBtn.classList.add('bg-teal-500','text-white');showToast('Welcome back, Creator 👋');}
+if(window.ethereum){window.ethereum.on('accountsChanged',(accounts)=>{if(accounts.length>0)updateButton(accounts[0]);else{currentAccount=null;connectBtn.textContent='Connect Wallet';connectBtn.classList.remove('bg-teal-500','text-white');connectBtn.classList.add('bg-white','text-black');}});}
+let time=16*3600+54*60+31;setInterval(()=>{time--;if(time<0)time=16*3600+54*60+31;const h=Math.floor(time/3600);const m=Math.floor((time%3600)/60);const s=time%60;const hh=document.getElementById('hours');if(hh){hh.textContent=h;document.getElementById('minutes').textContent=m;document.getElementById('seconds').textContent=s;}},1000);
+</script>
 </body>
-  </html>
+</html>

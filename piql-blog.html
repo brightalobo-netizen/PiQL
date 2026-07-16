@@ -1,203 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Community Blog - PiQL</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.js"></script>
-  <script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
-    body { font-family: 'Space Grotesk', sans-serif; }
-    .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 25%, #0d9488 100%); }
-    .card-glow:hover { box-shadow: 0 0 30px rgba(20, 184, 166, 0.3); transform: translateY(-4px); transition: all 0.3s ease; }
-    .btn-glow:hover { box-shadow: 0 0 20px rgba(20, 184, 166, 0.5); }
-  </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Blog & Insights - PiQL</title>
+<meta property="og:title" content="PiQL Blog - Insights & Tutorials"/>
+<meta property="og:description" content="Design by @moshiway, Built by Bright Alobo - Full-stack Web3"/>
+<meta property="og:image" content="https://brightalobo-netizen.github.io/PiQL/piql-thumbnail.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.js"></script>
+<style>@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');body{font-family:'Space Grotesk',sans-serif}.gradient-bg{background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 25%,#0d9488 100%);background-attachment:fixed}.card-glow{transition:all .4s}.card-glow:hover{box-shadow:0 0 30px rgba(20,184,166,.4);transform:translateY(-8px)}.btn-glow:hover{box-shadow:0 0 20px rgba(20,184,166,.6);transform:translateY(-1px)}#toastContainer{position:fixed;bottom:24px;right:24px;z-index:10000;display:flex;flex-direction:column;gap:12px;pointer-events:none}.toast{background:rgba(15,23,42,.95);border:1px solid rgba(255,255,255,.1);color:#fff;padding:14px 20px;border-radius:12px;display:flex;gap:10px;min-width:280px;animation:toastIn .3s;pointer-events:auto}.toast.success{border-color:#14b8a6;background:rgba(20,184,166,.15)}.toast.info{border-color:#8b5cf6;background:rgba(139,92,246,.15)}@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}</style>
 </head>
 <body class="gradient-bg text-white min-h-screen">
-  <nav class="px-6 py-4 md:px-12 flex justify-between items-center border-b border-white/10">
-    <div class="flex items-center gap-8">
-      <a href="index.html" class="text-2xl font-bold">PiQL</a>
-      <div class="hidden md:flex gap-6 text-sm text-gray-300">
-        <a href="piql-explore.html" class="hover:text-white">Explore</a>
-        <a href="piql-community.html" class="text-white font-medium">Community <span class="text-xs bg-teal-500 px-2 py-0.5 rounded">beta</span></a> 
-        <a href="piql-marketplace.html" class="hover:text-white">Marketplace</a>
-        <a href="piql-create.html" class="hover:text-white">Create</a>
-      </div>
-    </div>
-    <button id="connectWallet" class="bg-white text-black px-5 py-2 rounded-lg font-medium btn-glow transition">Connect Wallet</button>
-    <button id="menuBtn" class="md:hidden"><i data-lucide="menu"></i></button>
-  </nav>
+<nav class="px-6 py-4 md:px-12 flex justify-between items-center border-b border-white/10 sticky top-0 z-40 bg-[#0f172a]/80 backdrop-blur-lg">
+<div class="flex items-center gap-8"><a href="index.html" class="text-2xl font-bold">PiQL</a><div class="hidden md:flex gap-6 text-sm text-gray-300"><a href="piql-explore.html" class="hover:text-white">Explore</a><a href="piql-community.html" class="hover:text-white font-medium border-b-2 border-teal-500 pb-1">Blog <span class="text-xs bg-teal-500 px-2 py-0.5 rounded">beta</span></a><a href="piql-marketplace.html" class="hover:text-white">Marketplace</a><a href="piql-blog.html" class="text-white font-medium border-b-2 border-teal-500 pb-1"">Blog</a><a href="piql-create.html" class="hover:text-white">Create</a></div></div>
+<div class="flex items-center gap-3"><button id="connectWallet" class="bg-white text-black px-6 py-2.5 rounded-lg font-medium btn-glow transition text-[15px] leading-none">Connect Wallet</button><button id="menuBtn" class="md:hidden p-2"><i data-lucide="menu"></i></button></div>
+</nav>
+<div id="mobileMenu" class="hidden md:hidden bg-black/90 backdrop-blur-lg p-6 space-y-4 border-b border-white/10"><a href="piql-explore.html" class="block text-gray-300">Explore</a><a href="piql-community.html" class="block text-white">Community</a><a href="piql-marketplace.html" class="block text-gray-300">Marketplace</a><a href="piql-blog.html" class="block text-gray-300">Blog</a><a href="piql-create.html" class="block text-gray-300">Create</a></div>
 
-  <div id="mobileMenu" class="hidden md:hidden bg-black/80 backdrop-blur-lg p-6 space-y-4">
-    <a href="piql-explore.html" class="block">Explore</a>
-    <a href="piql-community.html" class="block text-white">Community</a>
-    <a href="piql-marketplace.html" class="block">Marketplace</a>
-    <a href="piql-create.html" class="block">Create</a>
-  </div>
+<section class="px-6 md:px-12 py-12 max-w-7xl mx-auto">
+<div class="mb-12"><span class="text-teal-400 text-sm uppercase tracking-wider">PiQL Blog</span><h2 class="text-4xl md:text-5xl font-bold mt-2 mb-4">Insights & Tutorials</h2><p class="text-gray-300 max-w-2xl">Web3 innovations, creator spotlights, PiQL ecosystem — Design by @moshiway, Built by Bright Alobo.</p></div>
+<div id="blogGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+<div id="pagination" class="flex justify-center gap-2 mt-12"></div>
+</section>
 
-  <section class="px-6 md:px-12 py-12 max-w-7xl mx-auto">
-    <div class="mb-12">
-      <span class="text-teal-400 font-medium text-sm tracking-wider uppercase">PiQL Hub</span>
-      <h2 class="text-4xl md:text-5xl font-bold mt-2 mb-4">Community & Insights</h2>
-      <p class="text-gray-300 max-w-2xl">Stay up to date with the latest Web3 innovations, creator spot-lights, and deep dives into the PiQL ecosystem.</p>
-    </div>
-
-    <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl p-6 md:p-8 mb-12 card-glow transition-all duration-300 grid md:grid-cols-2 gap-8 items-center">
-      <div class="overflow-hidden rounded-2xl aspect-[16/10] bg-gray-900">
-        <img src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&auto=format&fit=crop&q=80" alt="Featured Post" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
-      </div>
-      <div>
-        <span class="bg-teal-500/20 text-teal-300 px-3 py-1 rounded-full text-xs font-medium">Ecosystem</span>
-        <h3 class="text-2xl md:text-3xl font-bold mt-4 mb-3 leading-tight">Smart Contract Architectures: Scaling PiQL Asset Generation on Sepolia</h3>
-        <p class="text-gray-400 text-sm mb-6 leading-relaxed">We break down how our underlying layer utilizes gas-optimized minting techniques to make digital token distribution cheaper and faster for modern creators.</p>
-        
-        <div class="flex items-center justify-between border-t border-white/10 pt-4">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-teal-500 flex items-center justify-center font-bold text-black">B</div>
-            <div>
-              <p class="text-sm font-semibold">Bright</p>
-              <p class="text-xs text-gray-400">Core Developer</p>
-            </div>
-          </div>
-          <button onclick="showArticleModal('Smart Contract Architectures')" class="text-teal-400 font-medium hover:text-teal-300 text-sm flex items-center gap-1 transition">
-            Read Article <i data-lucide="arrow-right" class="w-4 h-4"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-      
-      <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-5 card-glow flex flex-col justify-between">
-        <div>
-          <div class="overflow-hidden rounded-xl mb-4 aspect-[16/10] bg-gray-900">
-            <img src="https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=600&auto=format&fit=crop&q=80" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
-          </div>
-          <span class="text-xs font-medium text-teal-400 uppercase tracking-wide">Web3 Security</span>
-          <h4 class="font-bold text-xl mt-2 mb-2 line-clamp-2">Securing Ethers.js Deployments Against Common Vector Exploits</h4>
-          <p class="text-sm text-gray-400 mb-6 line-clamp-3">A practical blueprint detailing provider hooks, transaction safety states, and secure wallet validation loops for web developers.</p>
-        </div>
-        <div class="flex items-center justify-between border-t border-white/5 pt-4">
-          <span class="text-xs text-gray-400 flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 5 min read</span>
-          <button onclick="showArticleModal('Securing Ethers.js Deployments')" class="bg-white/10 hover:bg-white/20 text-white text-xs px-4 py-2 rounded-lg font-medium transition">View</button>
-        </div>
-      </div>
-
-      <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-5 card-glow flex flex-col justify-between">
-        <div>
-          <div class="overflow-hidden rounded-xl mb-4 aspect-[16/10] bg-gray-900">
-            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
-          </div>
-          <span class="text-xs font-medium text-teal-400 uppercase tracking-wide">Tutorials</span>
-          <h4 class="font-bold text-xl mt-2 mb-2 line-clamp-2">How to Metadata: Setting Up Pinata IPFS Endpoints for Digital Assets</h4>
-          <p class="text-sm text-gray-400 mb-6 line-clamp-3">Step-by-step assembly of decentralized content storage nodes ensuring persistent links for tokenized art files.</p>
-        </div>
-        <div class="flex items-center justify-between border-t border-white/5 pt-4">
-          <span class="text-xs text-gray-400 flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 4 min read</span>
-          <button onclick="showArticleModal('Setting Up Pinata IPFS Endpoints')" class="bg-white/10 hover:bg-white/20 text-white text-xs px-4 py-2 rounded-lg font-medium transition">View</button>
-        </div>
-      </div>
-
-      <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-5 card-glow flex flex-col justify-between">
-        <div>
-          <div class="overflow-hidden rounded-xl mb-4 aspect-[16/10] bg-gray-900">
-            <img src="https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=600&auto=format&fit=crop&q=80" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
-          </div>
-          <span class="text-xs font-medium text-teal-400 uppercase tracking-wide">Community Updates</span>
-          <h4 class="font-bold text-xl mt-2 mb-2 line-clamp-2">Introducing the Community Beta Program and Governance Pipeline</h4>
-          <p class="text-sm text-gray-400 mb-6 line-clamp-3">A transparent overview of how our platform users will interact directly with features shaping up for the Q3 release schedule.</p>
-        </div>
-        <div class="flex items-center justify-between border-t border-white/5 pt-4">
-          <span class="text-xs text-gray-400 flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 3 min read</span>
-          <button onclick="showArticleModal('Introducing the Community Beta Program')" class="bg-white/10 hover:bg-white/20 text-white text-xs px-4 py-2 rounded-lg font-medium transition">View</button>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <div id="articleModal" class="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center hidden z-50 px-4">
-    <div class="bg-slate-900 border border-white/20 p-8 rounded-2xl max-w-sm w-full text-center relative card-glow">
-      <div class="w-16 h-16 bg-teal-500/20 text-teal-400 rounded-full flex items-center justify-center mx-auto mb-4">
-        <i data-lucide="book-open" class="w-8 h-8"></i>
-      </div>
-      <h3 id="modalArticleTitle" class="text-2xl font-bold mb-2">Article Title</h3>
-      <p class="text-gray-300 mb-6 text-sm">This site is developed by <span class="text-teal-400 font-semibold">Bright</span>.</p>
-      <button id="closeModalBtn" class="bg-white text-black w-full py-2.5 rounded-lg font-medium btn-glow transition hover:bg-gray-200">Close</button>
-    </div>
-  </div>
-
-  <footer class="px-6 md:px-12 py-8 mt-12 border-t border-white/10 text-center text-sm text-gray-400">
-    <p>Built on Sepolia. PiQL © 2026</p>
-  </footer>
-
-  <script>
-    lucide.createIcons();
-    
-    // Mobile menu toggle
-    document.getElementById('menuBtn').addEventListener('click', () => {
-      document.getElementById('mobileMenu').classList.toggle('hidden');
-    });
-
-    // Wallet connection management
-    const connectBtn = document.getElementById('connectWallet');
-    let currentAccount = null;
-
-    async function checkConnection() {
-      if (window.ethereum) {
-        try {
-          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-          if (accounts.length > 0) updateButton(accounts[0]);
-        } catch (err) { console.log('Not connected'); }
-      }
-    }
-    checkConnection();
-
-    connectBtn.addEventListener('click', async () => {
-      if (currentAccount) {
-        currentAccount = null;
-        connectBtn.textContent = 'Connect Wallet';
-        connectBtn.classList.remove('bg-teal-500', 'text-white');
-        connectBtn.classList.add('bg-white', 'text-black');
-      } else {
-        if (window.ethereum) {
-          try {
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            updateButton(accounts[0]);
-          } catch (error) { console.error('User rejected'); }
-        } else {
-          window.open('https://metamask.io/download/', '_blank');
-        }
-      }
-    });
-
-    function updateButton(address) {
-      currentAccount = address;
-      connectBtn.textContent = `👋 Hi Creator`;
-      connectBtn.title = `${address.slice(0,6)}...${address.slice(-4)}`;
-      connectBtn.classList.remove('bg-white', 'text-black');
-      connectBtn.classList.add('bg-teal-500', 'text-white');
-    }
-
-    // Article Modal handling
-    const articleModal = document.getElementById('articleModal');
-    const modalArticleTitle = document.getElementById('modalArticleTitle');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-
-    function showArticleModal(title) {
-      modalArticleTitle.textContent = title;
-      articleModal.classList.remove('hidden');
-    }
-
-    closeModalBtn.addEventListener('click', () => {
-      articleModal.classList.add('hidden');
-    });
-
-    articleModal.addEventListener('click', (e) => {
-      if (e.target === articleModal) articleModal.classList.add('hidden');
-    });
-  </script>
+<div id="articleModal" class="fixed inset-0 bg-black/70 backdrop-blur-md hidden z-50 px-4 flex items-center justify-center"><div class="bg-slate-900 border border-white/20 rounded-2xl max-w-md w-full overflow-hidden"><img id="modalImage" class="w-full h-48 object-cover"><div class="p-6 text-center"><h3 id="modalArticleTitle" class="text-xl font-bold mb-2"></h3><p class="text-gray-400 text-sm mb-4">Built by Bright Alobo — Design by @moshiway</p><div class="flex gap-3"><button onclick="shareCurrent()" class="flex-1 bg-white/10 py-2.5 rounded-lg">Share</button><button id="closeModalBtn" class="flex-1 bg-white text-black py-2.5 rounded-lg">Close</button></div></div></div></div>
+<div id="toastContainer"></div>
+<footer class="px-6 md:px-12 py-8 mt-12 border-t border-white/10 text-center text-sm text-gray-400"><div class="flex flex-col md:flex-row justify-between gap-4"><p>Built on Sepolia. PiQL © 2026</p><p>UI by <a href="https://dribbble.com/Moshiway" class="text-teal-400">Mohammad Moshtaghi @moshiway</a> • Built by <a href="https://github.com/brightalobo-netizen" class="text-white">Bright Alobo</a></p></div></footer>
+<script>
+lucide.createIcons();
+function showToast(m,t='success'){const c=document.getElementById('toastContainer');const d=document.createElement('div');d.className=`toast ${t}`;d.innerHTML=`<span>${m}</span>`;c.appendChild(d);setTimeout(()=>{d.style.opacity=0;setTimeout(()=>d.remove(),300)},3000);}
+document.getElementById('menuBtn').addEventListener('click',()=>document.getElementById('mobileMenu').classList.toggle('hidden'));
+const connectBtn=document.getElementById('connectWallet');let currentAccount=null;let likedItems=new Set(JSON.parse(localStorage.getItem('piql_community_likes')||'[]'));
+connectBtn.addEventListener('click',async()=>{if(currentAccount){currentAccount=null;connectBtn.textContent='Connect Wallet';connectBtn.classList.remove('bg-teal-500','text-white');connectBtn.classList.add('bg-white','text-black');}else{if(window.ethereum){try{const a=await window.ethereum.request({method:'eth_requestAccounts'});currentAccount=a[0];connectBtn.textContent='👋 Hi Creator';connectBtn.classList.remove('bg-white','text-black');connectBtn.classList.add('bg-teal-500','text-white');showToast('Welcome back, Creator 👋');}catch{}}else{window.open('https://metamask.io/download/','_blank');}}});
+const articles=[{id:0,title:"Smart Contract Architectures: Scaling PiQL on Sepolia",cat:"Ecosystem",read:"6 min",img:"https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&q=80"},{id:1,title:"Securing Ethers.js Deployments",cat:"Security",read:"5 min",img:"https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=600&q=80"},{id:2,title:"Pinata IPFS Endpoints for Digital Assets",cat:"Tutorials",read:"4 min",img:"https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&q=80"},{id:3,title:"Community Beta Program",cat:"Updates",read:"3 min",img:"https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=600&q=80"},{id:4,title:"Gas Optimization Batch Minting",cat:"Ecosystem",read:"7 min",img:"https://images.unsplash.com/photo-1620325867502-221cfb5faa5f?w=600&q=80"}];
+let currentPage=1,perPage=3,currentModalId=0;
+function render(){const grid=document.getElementById('blogGrid');const start=(currentPage-1)*perPage;const items=articles.slice(start,start+perPage);grid.innerHTML=items.map(a=>{const liked=likedItems.has(a.id);return `<div class="bg-white/5 border border-white/10 rounded-2xl p-5 card-glow"><div class="overflow-hidden rounded-xl mb-4 aspect-[16/10] bg-gray-900 relative"><img src="${a.img}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=600&q=80'"><div class="absolute top-3 right-3 flex gap-2"><button onclick="shareArticle(${a.id})" class="w-8 h-8 rounded-full bg-black/60 border border-white/10 flex items-center justify-center"><i data-lucide="share-2" class="w-4 h-4"></i></button><button onclick="toggleLike(${a.id})" class="w-8 h-8 rounded-full bg-black/60 border border-white/10 flex items-center justify-center ${liked?'text-pink-400':''}"><i data-lucide="heart" class="w-4 h-4" ${liked?'fill="currentColor"':''}></i></button></div></div><span class="text-xs text-teal-400 uppercase">${a.cat}</span><h4 class="font-bold text-xl mt-2 mb-2">${a.title}</h4><div class="flex justify-between border-t border-white/5 pt-4 mt-4"><span class="text-xs text-gray-400">${a.read}</span><button onclick="showModal('${a.title.replace(/'/g,"\\'")}')" class="bg-white/10 px-4 py-2 rounded-lg text-xs">View</button></div></div>`}).join('');const totalPages=Math.ceil(articles.length/perPage);document.getElementById('pagination').innerHTML=Array.from({length:totalPages},(_,i)=>`<button onclick="goToPage(${i+1})" class="w-10 h-10 rounded-lg border ${i+1===currentPage?'bg-white text-black':'bg-white/5 text-gray-300'}">${i+1}</button>`).join('');lucide.createIcons();}
+function goToPage(p){currentPage=p;render();}
+function toggleLike(id){if(likedItems.has(id)){likedItems.delete(id);showToast('Removed','info');}else{likedItems.add(id);showToast('Added to favorites ❤️');}localStorage.setItem('piql_community_likes',JSON.stringify([...likedItems]));render();}
+function shareArticle(id){const a=articles.find(x=>x.id===id);const url=location.origin+location.pathname+'#post-'+id;const text=`Check out ${a.title} on PiQL — Design by @moshiway, Built by Bright Alobo — Full-stack Web3`;if(navigator.share){navigator.share({title:a.title,text:text,url:url});}else{navigator.clipboard.writeText(url).then(()=>showToast('Link copied! '+a.title));}}
+function shareCurrent(){shareArticle(currentModalId);}
+function showModal(title){currentModalId=articles.find(a=>a.title===title)?.id||0;document.getElementById('modalArticleTitle').textContent=title;document.getElementById('articleModal').classList.remove('hidden');}
+document.getElementById('closeModalBtn').addEventListener('click',()=>document.getElementById('articleModal').classList.add('hidden'));
+document.getElementById('articleModal').addEventListener('click',(e)=>{if(e.target===document.getElementById('articleModal'))document.getElementById('articleModal').classList.add('hidden');});
+render();
+</script>
 </body>
 </html>
